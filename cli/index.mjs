@@ -225,6 +225,10 @@ write(
 on:
   push:
     branches: [ main ]
+  schedule:
+    - cron: '0 */6 * * *'
+  repository_dispatch:
+    types: [design-system-updated]
   workflow_dispatch:
 
 permissions:
@@ -245,14 +249,26 @@ jobs:
         with:
           submodules: recursive
 
+      - name: Pull latest Design System changes
+        run: git submodule update --remote --merge src/design-system
+
+      - name: Configure GitHub Pages (auto-enable)
+        uses: actions/configure-pages@v5
+        with:
+          enablement: true
+
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 22
-          cache: 'npm'
 
       - name: Install dependencies
-        run: npm ci
+        run: |
+          if [ -f package-lock.json ]; then
+            npm ci
+          else
+            npm install
+          fi
 
       - name: Build Angular application for GitHub Pages
         run: npm run build:gh-pages
@@ -781,13 +797,22 @@ try {
   }
   execSync('git push -u origin main', { stdio: 'inherit' });
 
+  // Enable GitHub Pages via GitHub Actions workflow if not already enabled
+  try {
+    execSync(\`gh api repos/\${repo}/pages -X POST -f build_type=workflow\`, { stdio: 'ignore' });
+  } catch {
+    try {
+      execSync(\`gh api repos/\${repo}/pages -X PUT -f build_type=workflow\`, { stdio: 'ignore' });
+    } catch {}
+  }
+
   // Apply canonical KMD main branch protection (1 PR review, dismiss stale reviews, only org admins bypass)
   console.log(\`🔒 Applying KMD branch protection rules to \${repo} (main)...\`);
   execSync(\`gh api repos/\${repo}/branches/main/protection -X PUT --input -\`, {
     input: JSON.stringify(protection),
     stdio: ['pipe', 'inherit', 'inherit']
   });
-  console.log(\`✅ Branch protection active on \${repo}!\`);
+  console.log(\`✅ Branch protection & GitHub Pages active on \${repo}!\`);
 } catch (err) {
   console.warn('⚠️ Could not complete GitHub repo/protection setup automatically. Run "npm run setup:github" once the repo is pushed.');
 }
