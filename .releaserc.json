@@ -3,7 +3,20 @@
   "plugins": [
     "@semantic-release/commit-analyzer",
     "@semantic-release/release-notes-generator",
-    "@semantic-release/npm",
-    "@semantic-release/github"
+    [
+      "@semantic-release/npm",
+      {
+        "npmPublish": false
+      }
+    ],
+    [
+      "@semantic-release/github",
+      {
+        "labels": false,
+        "releasedLabels": false,
+        "failComment": false,
+        "failTitle": false
+      }
+    ]
   ]
 }
