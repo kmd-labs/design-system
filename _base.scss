@@ -2,6 +2,7 @@
 
 :root {
   color-scheme: light;
+  --font-family: #{$font-family};
 
   @each $key, $value in $breakpoints {
     --bp-#{$key}: #{$value};
@@ -37,7 +38,7 @@ body {
   width: 100%;
   background: color("bg-deep");
   color: color("text-main");
-  font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-family: var(--font-family);
   overflow: hidden;
   -webkit-tap-highlight-color: transparent;
   user-select: none;

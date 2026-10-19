@@ -258,6 +258,9 @@ $radii: (
 // Single height shared by every interactive control (buttons, dropdown triggers, icon buttons)
 $control-height: 32px;
 
+// Single unified font family across all UI controls and 2D/3D canvas labels
+$font-family: "Inter", sans-serif;
+
 $font-weights: (
   "regular": 400,
   "medium": 500,
