@@ -115,7 +115,14 @@ write(
                 browser: 'src/main.ts',
                 polyfills: ['zone.js'],
                 tsConfig: 'tsconfig.app.json',
-                assets: ['src/assets'],
+                assets: [
+                  'src/assets',
+                  {
+                    glob: '**/*',
+                    input: 'src/design-system/assets',
+                    output: 'assets/design-system'
+                  }
+                ],
                 styles: ['src/styles.scss'],
                 scripts: [],
                 stylePreprocessorOptions: {
@@ -556,7 +563,12 @@ write(
   <header class="header">
     <div class="header__left">
       <div class="header__brand glass-panel">
-        <span class="header__logo-mark">KMD</span>
+        <div class="header__logo">
+          <img
+            class="header__logo-img"
+            src="assets/design-system/logo/kmd-black-orange.svg"
+            alt="KMD" />
+        </div>
         <span class="header__divider" aria-hidden="true"></span>
         <h1 class="header__app-name">${appTitle}</h1>
       </div>
@@ -659,21 +671,16 @@ write(
     border-radius: radius("pill");
   }
 
-  &__logo-mark {
-    font-size: font-size("base");
-    font-weight: font-weight("bold");
-    letter-spacing: 0.12em;
-    color: color("text-bright");
+  &__logo {
+    display: inline-flex;
+    align-items: center;
+  }
 
-    &::after {
-      content: "";
-      display: inline-block;
-      width: 5px;
-      height: 5px;
-      margin-left: 2px;
-      border-radius: 50%;
-      background: color("accent");
-    }
+  &__logo-img {
+    height: 16px;
+    width: auto;
+    display: block;
+    user-select: none;
   }
 
   &__divider {

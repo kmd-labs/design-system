@@ -11,6 +11,7 @@
     "_variables.scss",
     "_base.scss",
     "index.ts",
+    "assets",
     "ui",
     "services",
     "utils",
