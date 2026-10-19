@@ -927,12 +927,12 @@ try {
   console.warn('⚠️ Git/GitHub auto-setup skipped. Run "npm run setup:github" after creating the GitHub repo.');
 }
 
-console.log(\`
-✅ Successfully scaffolded \${appTitle} in ./\${appSlug}!
+console.log(`
+✅ Successfully scaffolded ${appTitle} in ./${appSlug}!
 
 Next steps:
-  cd \${appSlug}
+  cd ${appSlug}
   npm install
   npm start
-\`);
+`);
 
