@@ -6,16 +6,16 @@ Unified light-mode design system, Angular UI primitives, and zero-friction app s
 
 ## 1. Scaffold a New KMD Angular Visualization App
 
-Run directly from GitHub with `npx` (no installation required):
+Run directly from GitHub with `npx` (it will interactively prompt you for the project name and display title):
 
 ```bash
-npx github:kmd-labs/design-system my-visualization-app
+npx github:kmd-labs/design-system
 ```
 
-Or if installed from npm:
+Or pass your project name directly:
 
 ```bash
-npx @kmd-labs/design-system my-visualization-app
+npx github:kmd-labs/design-system <your-app-name>
 ```
 
 ### What the CLI Scaffolder Generates:

@@ -2,6 +2,7 @@
 
 import fs from 'node:fs';
 import path from 'node:path';
+import readline from 'node:readline/promises';
 import { execSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 
@@ -9,24 +10,60 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const DESIGN_SYSTEM_ROOT = path.resolve(__dirname, '..');
 
-const args = process.argv.slice(2).filter(a => !a.startsWith('-'));
-const rawName = args[0] === 'new' || args[0] === 'create' ? args[1] : args[0];
+const toSlug = str =>
+  str
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9-]+/g, '-')
+    .replace(/^-+|-+$/g, '');
 
-if (!rawName) {
-  console.error('\nUsage: npx github:kmd-labs/design-system <app-name>\n');
+const toTitle = slug =>
+  slug
+    .split('-')
+    .filter(Boolean)
+    .map(w => w.charAt(0).toUpperCase() + w.slice(1))
+    .join(' ');
+
+const args = process.argv.slice(2).filter(a => !a.startsWith('-'));
+const cliArg = args[0] === 'new' || args[0] === 'create' ? args[1] : args[0];
+const isPlaceholder = !cliArg || toSlug(cliArg) === 'my-visualization-app';
+
+let appSlug = isPlaceholder ? '' : toSlug(cliArg);
+let appTitle = appSlug ? toTitle(appSlug) : '';
+
+if (process.stdin.isTTY && !process.argv.includes('--yes') && !process.argv.includes('-y')) {
+  const rl = readline.createInterface({ input: process.stdin, output: process.stdout });
+  try {
+    while (true) {
+      const promptText = appSlug
+        ? `\n? Project / repository name (${appSlug}): `
+        : `\n? What is your visualization app name? (e.g. solar-wind): `;
+      const answer = (await rl.question(promptText)).trim();
+      const candidate = toSlug(answer || appSlug);
+      if (!candidate) {
+        console.log('⚠️  Please enter a valid project name.');
+        continue;
+      }
+      const candidateDir = path.resolve(process.cwd(), candidate);
+      if (fs.existsSync(candidateDir) && fs.readdirSync(candidateDir).length > 0) {
+        console.log(`⚠️  Directory "./${candidate}" already exists and is not empty. Please choose another name.`);
+        appSlug = '';
+        continue;
+      }
+      appSlug = candidate;
+      break;
+    }
+
+    const defaultTitle = toTitle(appSlug);
+    const titleAnswer = (await rl.question(`? Application display title (${defaultTitle}): `)).trim();
+    appTitle = titleAnswer || defaultTitle;
+  } finally {
+    rl.close();
+  }
+} else if (!appSlug) {
+  console.error('\nUsage: npx github:kmd-labs/design-system [app-name]\n');
   process.exit(1);
 }
-
-const appSlug = rawName
-  .trim()
-  .toLowerCase()
-  .replace(/[^a-z0-9-]+/g, '-')
-  .replace(/^-+|-+$/g, '');
-
-const appTitle = appSlug
-  .split('-')
-  .map(w => w.charAt(0).toUpperCase() + w.slice(1))
-  .join(' ');
 
 const targetDir = path.resolve(process.cwd(), appSlug);
 
@@ -49,6 +86,7 @@ if (fs.existsSync(agentsMdPath)) {
   write('AGENTS.md', fs.readFileSync(agentsMdPath, 'utf8'));
 }
 write('CLAUDE.md', '@AGENTS.md\n');
+write('.npmrc', 'legacy-peer-deps=true\n');
 
 // 2. package.json
 write(
@@ -67,23 +105,23 @@ write(
       },
       private: true,
       dependencies: {
-        '@angular/animations': '^21.0.0',
-        '@angular/common': '^21.0.0',
-        '@angular/compiler': '^21.0.0',
-        '@angular/core': '^21.0.0',
-        '@angular/forms': '^21.0.0',
-        '@angular/platform-browser': '^21.0.0',
-        '@angular/platform-browser-dynamic': '^21.0.0',
-        '@angular/router': '^21.0.0',
+        '@angular/animations': '~21.2.0',
+        '@angular/common': '~21.2.0',
+        '@angular/compiler': '~21.2.0',
+        '@angular/core': '~21.2.0',
+        '@angular/forms': '~21.2.0',
+        '@angular/platform-browser': '~21.2.0',
+        '@angular/platform-browser-dynamic': '~21.2.0',
+        '@angular/router': '~21.2.0',
         'lucide-angular': '^1.0.0',
         rxjs: '~7.8.0',
         tslib: '^2.3.0',
         'zone.js': '~0.15.0'
       },
       devDependencies: {
-        '@angular-devkit/build-angular': '^21.0.0',
-        '@angular/cli': '^21.0.0',
-        '@angular/compiler-cli': '^21.0.0',
+        '@angular-devkit/build-angular': '~21.2.0',
+        '@angular/cli': '~21.2.0',
+        '@angular/compiler-cli': '~21.2.0',
         typescript: '~5.9.0'
       }
     },
@@ -273,9 +311,9 @@ jobs:
       - name: Install dependencies
         run: |
           if [ -f package-lock.json ]; then
-            npm ci
+            npm ci --legacy-peer-deps
           else
-            npm install
+            npm install --legacy-peer-deps
           fi
 
       - name: Build Angular application for GitHub Pages
@@ -915,6 +953,12 @@ try {
     'git submodule add -b main https://github.com/kmd-labs/design-system.git src/design-system',
     { cwd: targetDir, stdio: 'inherit' }
   );
+  try {
+    execSync('npm install --package-lock-only --legacy-peer-deps --ignore-scripts', {
+      cwd: targetDir,
+      stdio: 'ignore'
+    });
+  } catch {}
   execSync('git add -A && git commit -m "feat: initial KMD app scaffold"', {
     cwd: targetDir,
     stdio: 'inherit'
