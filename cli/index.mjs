@@ -62,7 +62,8 @@ write(
         start: 'ng serve',
         build: 'ng build',
         'build:gh-pages': `ng build --base-href /${appSlug}/`,
-        watch: 'ng build --watch --configuration development'
+        watch: 'ng build --watch --configuration development',
+        'setup:github': 'node scripts/setup-github.mjs'
       },
       private: true,
       dependencies: {
@@ -731,15 +732,86 @@ write(
 `
 );
 
-// 8. Initialize git repository and link kmd-labs/design-system submodule
+// 8. Generate scripts/setup-github.mjs for applying canonical KMD branch protection
+const protectionPayload = JSON.stringify(
+  {
+    required_status_checks: null,
+    enforce_admins: false,
+    required_pull_request_reviews: {
+      dismiss_stale_reviews: true,
+      require_code_owner_reviews: false,
+      require_last_push_approval: false,
+      required_approving_review_count: 1
+    },
+    restrictions: null,
+    required_linear_history: false,
+    allow_force_pushes: false,
+    allow_deletions: false,
+    block_creations: false,
+    required_conversation_resolution: false,
+    lock_branch: false,
+    allow_fork_syncing: false
+  },
+  null,
+  2
+);
+
+write(
+  'scripts/setup-github.mjs',
+  `#!/usr/bin/env node
+import { execSync } from 'node:child_process';
+
+const repo = 'kmd-labs/${appSlug}';
+const protection = ${protectionPayload};
+
+try {
+  // Ensure repo exists on GitHub under kmd-labs (or create it if missing)
+  try {
+    execSync(\`gh repo view \${repo}\`, { stdio: 'ignore' });
+  } catch {
+    console.log(\`Creating public repository \${repo}...\`);
+    execSync(\`gh repo create \${repo} --public --source=. --remote=origin\`, { stdio: 'inherit' });
+  }
+
+  // Ensure origin remote is configured and main is pushed
+  try {
+    execSync('git remote get-url origin', { stdio: 'ignore' });
+  } catch {
+    execSync(\`git remote add origin https://github.com/\${repo}.git\`, { stdio: 'inherit' });
+  }
+  execSync('git push -u origin main', { stdio: 'inherit' });
+
+  // Apply canonical KMD main branch protection (1 PR review, dismiss stale reviews, only org admins bypass)
+  console.log(\`🔒 Applying KMD branch protection rules to \${repo} (main)...\`);
+  execSync(\`gh api repos/\${repo}/branches/main/protection -X PUT --input -\`, {
+    input: JSON.stringify(protection),
+    stdio: ['pipe', 'inherit', 'inherit']
+  });
+  console.log(\`✅ Branch protection active on \${repo}!\`);
+} catch (err) {
+  console.warn('⚠️ Could not complete GitHub repo/protection setup automatically. Run "npm run setup:github" once the repo is pushed.');
+}
+`
+);
+
+// 9. Initialize git repository, link kmd-labs/design-system submodule, and apply GitHub branch protection
+const skipGithub = process.argv.includes('--no-github');
 try {
   execSync('git init -b main', { cwd: targetDir, stdio: 'inherit' });
   execSync(
     'git submodule add -b main https://github.com/kmd-labs/design-system.git src/design-system',
     { cwd: targetDir, stdio: 'inherit' }
   );
+  execSync('git add -A && git commit -m "feat: initial KMD app scaffold"', {
+    cwd: targetDir,
+    stdio: 'inherit'
+  });
+
+  if (!skipGithub) {
+    execSync('node scripts/setup-github.mjs', { cwd: targetDir, stdio: 'inherit' });
+  }
 } catch {
-  console.warn('⚠️ Could not automatically add git submodule (check network/git status).');
+  console.warn('⚠️ Git/GitHub auto-setup skipped. Run "npm run setup:github" after creating the GitHub repo.');
 }
 
 console.log(\`
@@ -750,3 +822,4 @@ Next steps:
   npm install
   npm start
 \`);
+
