@@ -1,0 +1,9 @@
+<button
+  type="button"
+  [class]="buttonClasses"
+  [disabled]="disabled"
+  [attr.aria-label]="ariaLabel"
+  [appTooltip]="titleText"
+  (click)="handleClick($event)">
+  <ng-content></ng-content>
+</button>

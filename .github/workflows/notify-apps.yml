@@ -1,0 +1,31 @@
+name: Sync Consumer Apps
+
+on:
+  push:
+    branches:
+      - main
+  schedule:
+    # Run every 6 hours to ensure all KMD apps stay synced with the design system
+    - cron: '0 */6 * * *'
+  workflow_dispatch:
+
+jobs:
+  notify-consumers:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Dispatch design-system-updated event to kmd-labs consumer apps
+        env:
+          GH_TOKEN: ${{ secrets.ORG_DISPATCH_TOKEN || secrets.GITHUB_TOKEN }}
+          COMMIT_SHA: ${{ github.sha }}
+        run: |
+          # Discover public repos in kmd-labs organization (excluding design-system itself)
+          REPOS=$(gh api orgs/kmd-labs/repos --paginate --jq '.[] | select(.name != "design-system" and .archived == false) | .full_name' 2>/dev/null || echo "kmd-labs/el-nino")
+          for REPO in $REPOS; do
+            echo "Notifying $REPO of design-system commit $COMMIT_SHA..."
+            gh api "repos/$REPO/dispatches" \
+              -X POST \
+              -f event_type="design-system-updated" \
+              -f "client_payload[sha]=$COMMIT_SHA" || echo "Note: $REPO will sync via its own 6-hour cron schedule if ORG_DISPATCH_TOKEN is not set."
+          done

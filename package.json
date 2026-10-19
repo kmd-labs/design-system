@@ -1,0 +1,38 @@
+{
+  "name": "@kmd-labs/design-system",
+  "version": "1.0.0",
+  "description": "KMD Design System & Zero-Friction Angular Visualization App Scaffolder CLI",
+  "type": "module",
+  "bin": {
+    "design-system": "./cli/index.mjs",
+    "create-kmd-app": "./cli/index.mjs"
+  },
+  "files": [
+    "_variables.scss",
+    "_base.scss",
+    "index.ts",
+    "ui",
+    "services",
+    "utils",
+    "cli",
+    "AGENTS.md",
+    "CLAUDE.md",
+    "README.md",
+    "LICENSE"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/kmd-labs/design-system.git"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "keywords": [
+    "kmd",
+    "design-system",
+    "angular",
+    "visualization",
+    "scaffolder"
+  ],
+  "license": "GPL-3.0"
+}
