@@ -255,9 +255,10 @@ jobs:
         uses: actions/checkout@v4
         with:
           submodules: recursive
+          fetch-depth: 0
 
       - name: Pull latest Design System changes
-        run: git submodule update --remote --merge src/design-system
+        run: git submodule update --remote --force src/design-system
 
       - name: Configure GitHub Pages (auto-enable)
         uses: actions/configure-pages@v5
@@ -321,10 +322,11 @@ jobs:
         uses: actions/checkout@v4
         with:
           submodules: recursive
+          fetch-depth: 0
 
       - name: Update design-system submodule to latest main
         run: |
-          git submodule update --remote --merge src/design-system
+          git submodule update --remote --force src/design-system
 
       - name: Create Pull Request or Push Update
         if: \${{ success() }}
