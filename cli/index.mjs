@@ -115,7 +115,14 @@ write(
                 browser: 'src/main.ts',
                 polyfills: ['zone.js'],
                 tsConfig: 'tsconfig.app.json',
-                assets: ['src/assets'],
+                assets: [
+                  'src/assets',
+                  {
+                    glob: '**/*',
+                    input: 'src/design-system/assets',
+                    output: 'assets/design-system'
+                  }
+                ],
                 styles: ['src/styles.scss'],
                 scripts: [],
                 stylePreprocessorOptions: {
@@ -368,83 +375,121 @@ bootstrapApplication(AppComponent).catch(err => console.error(err));
 );
 
 write(
-  'src/app/core/i18n/i18n.service.ts',
-  `import { Injectable, computed, effect, signal } from '@angular/core';
+  'src/app/core/i18n/i18n.types.ts',
+  `export type Lang = 'en' | 'pl';
 
-export type Lang = 'en' | 'pl' | 'es';
-
+/**
+ * Every user-facing text of the application in one language.
+ * Add new translation keys here first so TypeScript enforces parity across en.ts and pl.ts.
+ */
 export interface Dict {
   htmlLang: string;
   docTitle: string;
   langName: string;
+
+  // Top HUD & Navigation
   changeLanguage: string;
   chooseView: string;
   viewPrimary: string;
   viewSecondary: string;
+  stageAriaLabel: string;
+
+  // Bottom Dock & Glossary
   timelineLabel: string;
   glossary: string;
+  glossaryDesc: string;
   close: string;
-}
 
+  // Application-specific keys (add below in both en.ts and pl.ts):
+}
+`
+);
+
+write(
+  'src/app/core/i18n/en.ts',
+  `import { Dict } from './i18n.types';
+
+export const EN: Dict = {
+  htmlLang: 'en',
+  docTitle: 'KMD · ${appTitle}',
+  langName: 'English',
+
+  // Top HUD & Navigation
+  changeLanguage: 'Language',
+  chooseView: 'View',
+  viewPrimary: 'Overview',
+  viewSecondary: 'Analysis',
+  stageAriaLabel: '${appTitle} Visualization',
+
+  // Bottom Dock & Glossary
+  timelineLabel: 'Timeline',
+  glossary: 'Glossary',
+  glossaryDesc: '',
+  close: 'Close'
+
+  // Application-specific keys:
+};
+`
+);
+
+write(
+  'src/app/core/i18n/pl.ts',
+  `import { Dict } from './i18n.types';
+
+export const PL: Dict = {
+  htmlLang: 'pl',
+  docTitle: 'KMD · ${appTitle}',
+  langName: 'Polski',
+
+  // Top HUD & Navigation
+  changeLanguage: 'Język',
+  chooseView: 'Widok',
+  viewPrimary: 'Przegląd',
+  viewSecondary: 'Analiza',
+  stageAriaLabel: 'Wizualizacja ${appTitle}',
+
+  // Bottom Dock & Glossary
+  timelineLabel: 'Oś czasu',
+  glossary: 'Słowniczek',
+  glossaryDesc: '',
+  close: 'Zamknij'
+
+  // Application-specific keys:
+};
+`
+);
+
+write(
+  'src/app/core/i18n/i18n.service.ts',
+  `import { Injectable, computed, effect, signal } from '@angular/core';
+import { Dict, Lang } from './i18n.types';
+import { EN } from './en';
+import { PL } from './pl';
+
+const DICTS: Record<Lang, Dict> = { en: EN, pl: PL };
 const STORAGE_KEY = '${appSlug}.lang';
 
-const DICTS: Record<Lang, Dict> = {
-  en: {
-    htmlLang: 'en',
-    docTitle: 'KMD · ${appTitle}',
-    langName: 'English',
-    changeLanguage: 'Language',
-    chooseView: 'View',
-    viewPrimary: 'Overview',
-    viewSecondary: 'Analysis',
-    timelineLabel: 'Timeline',
-    glossary: 'Glossary',
-    close: 'Close'
-  },
-  pl: {
-    htmlLang: 'pl',
-    docTitle: 'KMD · ${appTitle}',
-    langName: 'Polski',
-    changeLanguage: 'Język',
-    chooseView: 'Widok',
-    viewPrimary: 'Przegląd',
-    viewSecondary: 'Analiza',
-    timelineLabel: 'Oś czasu',
-    glossary: 'Słowniczek',
-    close: 'Zamknij'
-  },
-  es: {
-    htmlLang: 'es',
-    docTitle: 'KMD · ${appTitle}',
-    langName: 'Español',
-    changeLanguage: 'Idioma',
-    chooseView: 'Vista',
-    viewPrimary: 'Resumen',
-    viewSecondary: 'Análisis',
-    timelineLabel: 'Línea de tiempo',
-    glossary: 'Glosario',
-    close: 'Cerrar'
-  }
-};
-
+/**
+ * Manages UI language and localized texts.
+ * Resolves initial language from localStorage ('${appSlug}.lang') or Navigator API,
+ * falling back to 'en', and persists selection to localStorage.
+ */
 @Injectable({ providedIn: 'root' })
 export class I18nService {
   readonly dicts = DICTS;
-  readonly langs: Lang[] = ['en', 'pl', 'es'];
+  readonly langs: Lang[] = ['en', 'pl'];
   readonly lang = signal<Lang>(this.resolveInitialLang());
   readonly t = computed(() => DICTS[this.lang()]);
 
   constructor() {
     effect(() => {
-      const current = this.lang();
+      const currentLang = this.lang();
       const d = this.t();
       if (typeof document !== 'undefined') {
         document.documentElement.lang = d.htmlLang;
         document.title = d.docTitle;
       }
-      try {
-        localStorage.setItem(STORAGE_KEY, current);
-      } catch {}
+      this.persistLang(currentLang);
     });
   }
 
@@ -455,16 +500,40 @@ export class I18nService {
   private resolveInitialLang(): Lang {
     try {
       const stored = localStorage.getItem(STORAGE_KEY);
-      if (stored === 'en' || stored === 'pl' || stored === 'es') return stored;
-    } catch {}
+      if (this.isSupportedLang(stored)) {
+        return stored;
+      }
+    } catch {
+      // localStorage unavailable
+    }
+
     if (typeof navigator !== 'undefined') {
-      const candidates = [...(navigator.languages ?? []), navigator.language].filter(Boolean);
-      for (const c of candidates) {
-        const prefix = c.slice(0, 2).toLowerCase();
-        if (prefix === 'en' || prefix === 'pl' || prefix === 'es') return prefix;
+      const candidates = [
+        ...(Array.isArray(navigator.languages) ? navigator.languages : []),
+        navigator.language
+      ].filter(Boolean);
+
+      for (const candidate of candidates) {
+        const prefix = candidate.slice(0, 2).toLowerCase();
+        if (this.isSupportedLang(prefix)) {
+          return prefix;
+        }
       }
     }
+
     return 'en';
+  }
+
+  private isSupportedLang(val: string | null | undefined): val is Lang {
+    return val === 'en' || val === 'pl';
+  }
+
+  private persistLang(lang: Lang) {
+    try {
+      localStorage.setItem(STORAGE_KEY, lang);
+    } catch {
+      // localStorage unavailable
+    }
   }
 }
 `
@@ -485,7 +554,8 @@ import {
   TooltipComponent,
   BreakpointService
 } from '@kmd/design-system';
-import { I18nService, Lang } from './core/i18n/i18n.service';
+import { I18nService } from './core/i18n/i18n.service';
+import { Lang } from './core/i18n/i18n.types';
 
 @Component({
   selector: 'app-root',
@@ -538,7 +608,7 @@ export class AppComponent {
     this.popup.open({
       id: 'glossary',
       title: computed(() => this.i18n.t().glossary),
-      description: '${appTitle} interactive visualization glossary.',
+      description: computed(() => this.i18n.t().glossaryDesc),
       size: 'md',
       actions: [{ label: computed(() => this.i18n.t().close), variant: 'default' }]
     });
@@ -556,7 +626,12 @@ write(
   <header class="header">
     <div class="header__left">
       <div class="header__brand glass-panel">
-        <span class="header__logo-mark">KMD</span>
+        <div class="header__logo">
+          <img
+            class="header__logo-img"
+            src="assets/design-system/logo/kmd-black-orange.svg"
+            alt="KMD" />
+        </div>
         <span class="header__divider" aria-hidden="true"></span>
         <h1 class="header__app-name">${appTitle}</h1>
       </div>
@@ -590,7 +665,7 @@ write(
   </header>
 
   <!-- Fullscreen Visualization Stage -->
-  <section class="stage" aria-label="${appTitle} Visualization"></section>
+  <section class="stage" [attr.aria-label]="t.stageAriaLabel"></section>
 
   <!-- Bottom Dock: Sliders & Glossaries -->
   <footer class="dock-wrap">
@@ -659,21 +734,16 @@ write(
     border-radius: radius("pill");
   }
 
-  &__logo-mark {
-    font-size: font-size("base");
-    font-weight: font-weight("bold");
-    letter-spacing: 0.12em;
-    color: color("text-bright");
+  &__logo {
+    display: inline-flex;
+    align-items: center;
+  }
 
-    &::after {
-      content: "";
-      display: inline-block;
-      width: 5px;
-      height: 5px;
-      margin-left: 2px;
-      border-radius: 50%;
-      background: color("accent");
-    }
+  &__logo-img {
+    height: 16px;
+    width: auto;
+    display: block;
+    user-select: none;
   }
 
   &__divider {

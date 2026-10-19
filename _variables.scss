@@ -16,16 +16,16 @@ $palette-danger: (
 );
 
 $palette-warning: (
-  "warning-50": #fffbeb,
-  "warning-100": #fef3c7,
-  "warning-200": #fde68a,
-  "warning-300": #fde047,
-  "warning-400": #fb923c,
-  "warning-500": #f59e0b,
-  "warning-600": #ea580c,
-  "warning-700": #c2410c,
-  "warning-800": #9a3412,
-  "warning-900": #7c2d12,
+  "warning-50": #fdf6ed,
+  "warning-100": #fbe8d0,
+  "warning-200": #f7cfa0,
+  "warning-300": #f2b263,
+  "warning-400": #e6922e,
+  "warning-500": #d37400,
+  "warning-600": #b86300,
+  "warning-700": #965000,
+  "warning-800": #783f00,
+  "warning-900": #5e3100,
 );
 
 $palette-success: (
@@ -160,9 +160,9 @@ $semantic-colors: (
   "info": palette("info-400"),
   "info-soft": rgba(palette("info-400"), 0.16),
   // Brand & Accents
-  "accent": palette("warning-600"),
+  "accent": palette("warning-500"),
   "accent-hover": palette("warning-400"),
-  "accent-glow": rgba(palette("warning-600"), 0.32),
+  "accent-glow": rgba(palette("warning-500"), 0.32),
   "cool": palette("info-400"),
   "loading-warn": palette("warning-500"),
   "error": palette("danger-500"),
@@ -205,10 +205,10 @@ $theme-colors: (
   "btn-hover": rgba(palette("neutral-900"), 0.08),
   "btn-active-blue": rgba(palette("info-600"), 0.14),
   "btn-active-blue-border": rgba(palette("info-600"), 0.55),
-  "btn-active-red": rgba(palette("warning-600"), 0.15),
-  "btn-active-red-border": rgba(palette("warning-600"), 0.6),
-  "btn-play-active": rgba(palette("warning-600"), 0.16),
-  "btn-play-border": rgba(palette("warning-600"), 0.65),
+  "btn-active-red": rgba(palette("warning-500"), 0.15),
+  "btn-active-red-border": rgba(palette("warning-500"), 0.6),
+  "btn-play-active": rgba(palette("warning-500"), 0.16),
+  "btn-play-border": rgba(palette("warning-500"), 0.65),
   "slider-thumb-bg": palette("neutral-0"),
   // 3D Globe & Canvas specific tokens
   "globe-bg": palette("neutral-50"),
