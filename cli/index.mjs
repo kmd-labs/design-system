@@ -298,19 +298,10 @@ jobs:
       - name: Pull latest Design System changes
         run: git submodule update --remote --force src/design-system
 
-      - name: Generate GitHub App Token
-        id: app-token
-        uses: actions/create-github-app-token@v1
-        continue-on-error: true
-        with:
-          app-id: \${{ secrets.KMD_BOT_APP_ID }}
-          private-key: \${{ secrets.KMD_BOT_PRIVATE_KEY }}
-
       - name: Configure GitHub Pages (auto-enable)
         uses: actions/configure-pages@v5
         with:
           enablement: true
-          token: \${{ steps.app-token.outputs.token != '' && steps.app-token.outputs.token || github.token }}
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
@@ -915,75 +906,41 @@ import { execSync } from 'node:child_process';
 const repo = 'kmd-labs/${appSlug}';
 const protection = ${protectionPayload};
 
-const run = (cmd, opts = {}) => execSync(cmd, { stdio: 'inherit', ...opts });
-const runSilent = (cmd, opts = {}) => execSync(cmd, { stdio: 'pipe', ...opts });
-
 try {
-  // 1. Verify GitHub CLI authentication
+  // Ensure repo exists on GitHub under kmd-labs (or create it if missing)
   try {
-    runSilent('gh auth status');
-  } catch {
-    console.warn('⚠️ GitHub CLI (gh) is not authenticated. Please run "gh auth login" and then "npm run setup:github".');
-    process.exit(0);
-  }
-
-  // 2. Ensure repo exists on GitHub under kmd-labs (or create it if missing)
-  try {
-    runSilent(\`gh repo view \${repo}\`);
+    execSync(\`gh repo view \${repo}\`, { stdio: 'ignore' });
   } catch {
     console.log(\`Creating public repository \${repo}...\`);
-    run(\`gh repo create \${repo} --public\`);
+    execSync(\`gh repo create \${repo} --public --source=. --remote=origin\`, { stdio: 'inherit' });
   }
 
-  // 3. Ensure origin remote is configured
+  // Ensure origin remote is configured and main is pushed
   try {
-    runSilent('git remote get-url origin');
+    execSync('git remote get-url origin', { stdio: 'ignore' });
   } catch {
-    run(\`git remote add origin https://github.com/\${repo}.git\`);
+    execSync(\`git remote add origin https://github.com/\${repo}.git\`, { stdio: 'inherit' });
   }
+  execSync('git push -u origin main', { stdio: 'inherit' });
 
-  // 4. Enable GitHub Pages via GitHub Actions BEFORE pushing so the initial workflow succeeds immediately
-  console.log(\`🌐 Enabling GitHub Pages (GitHub Actions) on \${repo}...\`);
+  // Enable GitHub Pages via GitHub Actions workflow if not already enabled
   try {
-    runSilent(\`gh api repos/\${repo}/pages -X POST -f build_type=workflow\`);
-    console.log('✅ GitHub Pages enabled with GitHub Actions!');
+    execSync(\`gh api repos/\${repo}/pages -X POST -f build_type=workflow\`, { stdio: 'ignore' });
   } catch {
     try {
-      runSilent(\`gh api repos/\${repo}/pages -X PUT -f build_type=workflow\`);
-      console.log('✅ GitHub Pages updated to GitHub Actions!');
+      execSync(\`gh api repos/\${repo}/pages -X PUT -f build_type=workflow\`, { stdio: 'ignore' });
     } catch {}
   }
 
-  // 5. Push main branch
-  console.log(\`🚀 Pushing main branch to \${repo}...\`);
-  run('git push -u origin main');
-
-  // 6. Confirm GitHub Pages status after branch creation
-  try {
-    runSilent(\`gh api repos/\${repo}/pages -X POST -f build_type=workflow\`);
-  } catch {
-    try {
-      runSilent(\`gh api repos/\${repo}/pages -X PUT -f build_type=workflow\`);
-    } catch {}
-  }
-
-  // 7. Apply canonical KMD main branch protection (1 PR review, dismiss stale reviews, org admins bypass)
+  // Apply canonical KMD main branch protection (1 PR review, dismiss stale reviews, only org admins bypass)
   console.log(\`🔒 Applying KMD branch protection rules to \${repo} (main)...\`);
-  try {
-    execSync(\`gh api repos/\${repo}/branches/main/protection -X PUT --input -\`, {
-      input: JSON.stringify(protection),
-      stdio: ['pipe', 'inherit', 'inherit']
-    });
-    console.log(\`✅ Branch protection applied to main!\`);
-  } catch (protErr) {
-    console.warn('⚠️ Could not apply branch protection rules automatically (requires org admin privileges).');
-  }
-
-  console.log(\`\n🎉 Repository setup complete: https://github.com/\${repo}\`);
-  console.log(\`🌐 Live site URL: https://kmd-labs.github.io/${appSlug}/\n\`);
+  execSync(\`gh api repos/\${repo}/branches/main/protection -X PUT --input -\`, {
+    input: JSON.stringify(protection),
+    stdio: ['pipe', 'inherit', 'inherit']
+  });
+  console.log(\`✅ Branch protection & GitHub Pages active on \${repo}!\`);
 } catch (err) {
-  console.error('⚠️ Could not complete GitHub repo setup automatically:', err.message);
-  console.warn('Run "npm run setup:github" once your repository is ready.');
+  console.warn('⚠️ Could not complete GitHub repo/protection setup automatically. Run "npm run setup:github" once the repo is pushed.');
 }
 `
 );
@@ -1006,16 +963,12 @@ try {
     cwd: targetDir,
     stdio: 'inherit'
   });
-} catch (gitErr) {
-  console.warn('⚠️ Local git initialization encountered an issue:', gitErr.message);
-}
 
-if (!skipGithub) {
-  try {
+  if (!skipGithub) {
     execSync('node scripts/setup-github.mjs', { cwd: targetDir, stdio: 'inherit' });
-  } catch (ghErr) {
-    console.warn('⚠️ GitHub auto-setup was not completed. Run "npm run setup:github" once your repo is ready.');
   }
+} catch {
+  console.warn('⚠️ Git/GitHub auto-setup skipped. Run "npm run setup:github" after creating the GitHub repo.');
 }
 
 console.log(`
