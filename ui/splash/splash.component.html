@@ -1,0 +1,22 @@
+@if (visible) {
+  <div
+    class="splash"
+    [class.splash--fading]="fading"
+    [class.splash--error]="error"
+    role="status"
+    aria-live="polite"
+    [attr.aria-label]="status">
+    <div class="splash__inner">
+      <div class="splash__mark" aria-hidden="true">
+        <span class="splash__word">KMD</span>
+        <span class="splash__dot"></span>
+      </div>
+
+      <div class="splash__track" aria-hidden="true">
+        <span class="splash__fill" [style.width.%]="progress"></span>
+      </div>
+
+      <p class="splash__status">{{ status }}</p>
+    </div>
+  </div>
+}

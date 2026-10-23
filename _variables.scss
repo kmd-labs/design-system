@@ -261,6 +261,9 @@ $control-height: 32px;
 // Single unified font family across all UI controls and 2D/3D canvas labels
 $font-family: "Inter", sans-serif;
 
+// Script face reserved for the splash wordmark (loaded by the host app)
+$font-family-script: "Borel", cursive;
+
 $font-weights: (
   "regular": 400,
   "medium": 500,

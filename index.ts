@@ -5,6 +5,7 @@ export * from './ui/dropdown/dropdown.model';
 export * from './ui/popup/popup.component';
 export * from './ui/popup/popup.model';
 export * from './ui/popup/popup.service';
+export * from './ui/splash/splash.component';
 export * from './ui/timeline-slider/timeline-slider.component';
 export * from './ui/timeline-slider/timeline-slider.model';
 export * from './ui/tooltip/tooltip.component';
