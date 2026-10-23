@@ -66,11 +66,13 @@
     border-radius: radius("pill");
     background: linear-gradient(
       90deg,
-      color("anom-m3") 0%,
-      color("anom-m1-5") 20%,
-      color("anom-0") 40%,
-      color("anom-p1-5") 68%,
-      color("anom-p3") 100%
+      color("sst-m2") 0%,
+      color("sst-5") 18%,
+      color("sst-15") 40%,
+      color("sst-23") 58%,
+      color("sst-27-5") 78%,
+      color("sst-29-2") 90%,
+      color("sst-35") 100%
     );
     border: 1px solid color("line-strong");
     pointer-events: none;

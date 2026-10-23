@@ -12,7 +12,9 @@
     @if (icon()) {
       <lucide-icon [img]="icon()" [size]="15"></lucide-icon>
     }
-    <span class="dropdown__trigger-label">{{ triggerText() }}</span>
+    @if (!iconOnly()) {
+      <span class="dropdown__trigger-label">{{ triggerText() }}</span>
+    }
     <lucide-icon
       class="dropdown__chevron"
       [class.dropdown__chevron--open]="isOpen()"
