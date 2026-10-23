@@ -8,8 +8,8 @@
     [attr.aria-label]="status">
     <div class="splash__inner">
       <div class="splash__mark" aria-hidden="true">
-        <span class="splash__word">kmd</span>
-        <span class="splash__dot"></span>
+        <span class="splash__word" (animationend)="onWordAnimationEnd($event)">kmd</span>
+        <span class="splash__dot" (animationend)="onDotAnimationEnd($event)"></span>
       </div>
 
       <div class="splash__track" aria-hidden="true">

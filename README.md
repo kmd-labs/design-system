@@ -21,6 +21,7 @@ npx github:kmd-labs/design-system <your-app-name>
 ### What the CLI Scaffolder Generates:
 - **Angular 21 Standalone Application** pre-wired with the KMD single Light Theme (`_variables.scss` + `_base.scss`).
 - **Git Submodule (`src/design-system`)** linked to `https://github.com/kmd-labs/design-system.git` with TypeScript path alias `@kmd/design-system/*` and SCSS `includePaths`.
+- **Shared brand assets:** the official KMD logotype plus the accent-orange circle favicon (`assets/favicon.svg` / `.ico`).
 - **Canonical KMD HUD Layout:**
   - **Top-Left:** `KMD | <App Name>` logotype pill + compact language selector (`EN` / `PL` / `ES`) initialized from `localStorage` and `navigator.languages`.
   - **Top-Right:** Visualization view/mode switcher dropdown.

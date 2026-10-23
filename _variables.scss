@@ -163,6 +163,7 @@ $semantic-colors: (
   "accent": palette("warning-500"),
   "accent-hover": palette("warning-400"),
   "accent-glow": rgba(palette("warning-500"), 0.32),
+  "accent-glow-soft": rgba(palette("warning-500"), 0.08),
   "cool": palette("info-400"),
   "loading-warn": palette("warning-500"),
   "error": palette("danger-500"),
@@ -243,6 +244,7 @@ $transitions: (
   "fast": 0.15s cubic-bezier(0.4, 0, 0.2, 1),
   "base": 0.25s cubic-bezier(0.4, 0, 0.2, 1),
   "slow": 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+  "splash": 0.62s ease,
 );
 
 $radii: (
