@@ -12,7 +12,7 @@ This document defines the mandatory UI, architectural, and engineering conventio
   - Do **not** implement dark mode, light/dark toggle buttons, or theme persistence in `localStorage`.
   - Canvas/WebGL renderers read design tokens at runtime via `ThemeService.getTokenColor(token)` from `:root` CSS custom properties (`--color-*`).
 - **Unified Typography (`Inter`):** All UI elements and `<canvas>` 2D/3D text labels use a single font family (`$font-family: "Inter", sans-serif;` emitted as `--font-family` on `:root`). Canvas renderers must use `ThemeService.getFontFamily()` instead of hardcoding system font stacks like `"Segoe UI"`.
-  - The only exception is the splash wordmark, which uses the **Borel** script face (`$font-family-script`, emitted as `--font-family-script`). The host app must load the Borel font; all other text remains Inter.
+  - The splash uses the official `assets/design-system/logo/kmd-black-orange.svg` logotype with a left-to-right clip reveal. Numeric readouts use the monospaced face (`$font-family-mono`, emitted as `--font-family-mono`); all other text remains Inter.
 
 ---
 
@@ -74,7 +74,7 @@ Shared styles, UI primitives, and core utilities live in the [`kmd-labs/design-s
   - `PopupComponent` & `PopupService` (`app-popup`) — modal dialogs for glossaries and deep-dive data.
   - `TooltipComponent`, `TooltipDirective`, & `TooltipService` (`[appTooltip]`).
   - `BadgeComponent` (`app-badge`) — semantic status and phase pills.
-  - `SplashComponent` (`app-splash`) — full-screen KMD loader with the Borel wordmark, orange accent dot and progress bar.
+  - `SplashComponent` (`app-splash`) — full-screen KMD loader with the official SVG logotype and progress bar.
   - `TimelineSliderComponent` (`app-timeline-slider`) — interactive range slider with preset markers.
 - **Core Services & Utils (`@kmd/design-system/services/*`, `@kmd/design-system/utils/*`):**
   - `BreakpointService` & `breakpoints.ts`

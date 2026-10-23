@@ -8,8 +8,11 @@
     [attr.aria-label]="status">
     <div class="splash__inner">
       <div class="splash__mark" aria-hidden="true">
-        <span class="splash__word" (animationend)="onWordAnimationEnd($event)">kmd</span>
-        <span class="splash__dot" (animationend)="onDotAnimationEnd($event)"></span>
+        <img
+          class="splash__logo"
+          src="assets/design-system/logo/kmd-black-orange.svg"
+          alt=""
+          (animationend)="onRevealAnimationEnd($event)">
       </div>
 
       <div class="splash__track" aria-hidden="true">

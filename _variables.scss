@@ -111,27 +111,18 @@ $palette: map.merge(
 
 // Thermal (Sea Surface Temperature, °C) color scale stops
 $thermal-colors: (
-  "sst-m2": palette("neutral-50"),
-  // -2 °C
-  "sst-0": palette("primary-100"),
-  //  0 °C
-  "sst-5": palette("primary-200"),
-  //  5 °C
-  "sst-10": palette("primary-300"),
-  // 10 °C
-  "sst-15": palette("primary-400"),
-  // 15 °C
-  "sst-20": palette("info-400"),
-  // 20 °C
-  "sst-23": palette("success-300"),
-  // 23 °C
-  "sst-25-5": palette("warning-300"),
-  // 25.5 °C
-  "sst-27-5": palette("warning-400"),
-  // 27.5 °C
-  "sst-29-2": palette("danger-400"),
-  // 29.2 °C
-  "sst-31": palette("danger-600"), // 31 °C
+  "sst-m2": #829c9e,
+  "sst-0": #7f98a2,
+  "sst-5": #7b8ead,
+  "sst-10": #839dbd,
+  "sst-15": #93b1ce,
+  "sst-20": #c1d1de,
+  "sst-23": #dcdbc2,
+  "sst-25-5": #edd685,
+  "sst-27-5": #eab81f,
+  "sst-29-2": palette("warning-500"),
+  "sst-31": #cc3e1c,
+  "sst-35": #a40d19,
 );
 
 // Temperature Anomaly (°C vs normal) color scale stops
@@ -263,8 +254,7 @@ $control-height: 32px;
 // Single unified font family across all UI controls and 2D/3D canvas labels
 $font-family: "Inter", sans-serif;
 
-// Script face reserved for the splash wordmark (loaded by the host app)
-$font-family-script: "Borel", cursive;
+$font-family-mono: "JetBrains Mono", "SFMono-Regular", ui-monospace, monospace;
 
 $font-weights: (
   "regular": 400,

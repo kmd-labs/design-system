@@ -24,7 +24,7 @@ export class TooltipService {
       this.autoHideTimer = null;
     }
 
-    const padX = Math.min(110, Math.max(48, text.length * 3.6));
+    const padX = Math.min(142, Math.max(48, text.length * 3.6));
     const clampedX = Math.max(padX, Math.min(window.innerWidth - padX, x));
     const clampedY = Math.max(12, Math.min(window.innerHeight - 12, y));
 
