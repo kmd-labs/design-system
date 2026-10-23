@@ -33,6 +33,7 @@ export class DropdownComponent<T = string> {
   readonly align = input<'left' | 'right'>('left');
   readonly direction = input<'down' | 'up'>('down');
   readonly fullWidth = input<boolean>(false);
+  readonly iconOnly = input<boolean>(false);
 
   readonly valueChange = output<T>();
 
