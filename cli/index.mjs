@@ -675,6 +675,8 @@ export class AppComponent {
     () => this.viewOptions().find(o => o.value === this.currentView())?.icon ?? Activity
   );
 
+  readonly isPopupOpen = computed(() => this.popup.config() !== null);
+
   openGlossary() {
     this.popup.open({
       id: 'glossary',
@@ -696,21 +698,21 @@ write(
   <app-splash></app-splash>
 
   <!-- Top HUD: Left Logotype + Language, Right View Switcher -->
-  <header class="header">
+  <header class="header" [class.header--popup-open]="isPopupOpen()">
     <div class="header__left">
       <div class="header__brand glass-panel">
         <button
           type="button"
-          class="header__logo"
-          aria-label="KMD Labs"
+          class="header__brand-btn"
+          aria-label="KMD Labs – About us"
           (click)="about.open({ lang: i18n.lang() })">
           <img
             class="header__logo-img"
             src="assets/design-system/logo/kmd-black-orange.svg"
             alt="KMD" />
+          <span class="header__divider" aria-hidden="true"></span>
+          <h1 class="header__app-name">\${appTitle}</h1>
         </button>
-        <span class="header__divider" aria-hidden="true"></span>
-        <h1 class="header__app-name">${appTitle}</h1>
       </div>
 
       <div class="header__settings glass-panel" role="group" [attr.aria-label]="t.changeLanguage">
@@ -792,7 +794,19 @@ write(
   align-items: center;
   gap: 12px;
   pointer-events: none;
-  z-index: 20;
+  z-index: 25;
+
+  &--popup-open {
+    z-index: 120;
+
+    .header__settings,
+    .header__view {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transition: opacity transition("fast"), visibility transition("fast");
+    }
+  }
 
   &__left,
   &__right {
@@ -805,23 +819,40 @@ write(
   &__brand {
     display: inline-flex;
     align-items: center;
-    gap: 10px;
     height: 42px;
-    padding: 4px 14px;
+    padding: 4px;
     border-radius: radius("pill");
   }
 
-  &__logo {
+  &__brand-btn {
     display: inline-flex;
     align-items: center;
-    padding: 0;
+    gap: 10px;
+    height: 34px;
+    padding: 0 12px 0 8px;
+    border-radius: radius("pill");
     border: 0;
-    background: none;
+    background: transparent;
+    font: inherit;
+    color: color("text-bright");
     cursor: pointer;
-    transition: opacity transition("fast");
+    text-decoration: none;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    transition: background transition("fast"), transform transition("fast");
 
     &:hover {
-      opacity: 0.75;
+      background: color("btn-hover");
+    }
+
+    &:active {
+      background: color("btn-hover");
+      transform: scale(0.98);
+    }
+
+    &:focus-visible {
+      outline: 2px solid color("accent");
+      outline-offset: 1px;
     }
   }
 
@@ -851,6 +882,7 @@ write(
     align-items: center;
     padding: 4px;
     border-radius: radius("pill");
+    transition: opacity transition("fast"), visibility transition("fast");
   }
 
   &__view {

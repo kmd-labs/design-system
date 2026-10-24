@@ -24,7 +24,7 @@ export const TEAM_MEMBERS: TeamMember[] = [
 
 export const ABOUT_DICTS: Record<'en' | 'pl' | 'es', AboutText> = {
   en: {
-    docTitle: 'About us – KMD Labs, the team behind El Niño 2026 in 3D',
+    docTitle: 'About us – KMD Labs, interactive data visualisations',
     metaDescription: 'Meet KMD Labs, a team of three building interactive data visualisations: data engineering, machine learning, 3D graphics and cartography. Open to new projects.',
     cta: 'Open to new projects',
     contact: 'Contact',
@@ -73,7 +73,7 @@ export const ABOUT_DICTS: Record<'en' | 'pl' | 'es', AboutText> = {
     ]
   },
   pl: {
-    docTitle: 'O nas – KMD Labs, zespół stojący za El Niño 2026 w 3D',
+    docTitle: 'O nas – KMD Labs, interaktywne wizualizacje danych',
     metaDescription: 'Poznaj KMD Labs – trzyosobowy zespół tworzący interaktywne wizualizacje danych: inżynieria danych, uczenie maszynowe, grafika 3D i kartografia. Jesteśmy otwarci na projekty.',
     cta: 'Jesteśmy otwarci na projekty',
     contact: 'Kontakt',
@@ -122,7 +122,7 @@ export const ABOUT_DICTS: Record<'en' | 'pl' | 'es', AboutText> = {
     ]
   },
   es: {
-    docTitle: 'Sobre nosotros – KMD Labs, el equipo detrás de El Niño 2026 en 3D',
+    docTitle: 'Sobre nosotros – KMD Labs, visualizaciones interactivas de datos',
     metaDescription: 'Conoce a KMD Labs, un equipo de tres personas que crea visualizaciones interactivas de datos: ingeniería de datos, aprendizaje automático, gráficos 3D y cartografía. Abiertos a nuevos proyectos.',
     cta: 'Abiertos a nuevos proyectos',
     contact: 'Contacto',
