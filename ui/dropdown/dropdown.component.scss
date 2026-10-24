@@ -119,6 +119,10 @@
     white-space: nowrap;
     transition: background transition("fast"), color transition("fast"), border-color transition("fast");
 
+    lucide-icon {
+      flex: none;
+    }
+
     &:hover {
       background: color("btn-hover");
       color: color("text-bright");
