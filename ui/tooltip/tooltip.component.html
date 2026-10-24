@@ -5,7 +5,25 @@
   [class.ui-tooltip--visible]="tooltip.visible()"
   [class.ui-tooltip--top]="tooltip.placement() === 'top'"
   [class.ui-tooltip--bottom]="tooltip.placement() === 'bottom'"
+  [class.ui-tooltip--nowrap]="tooltip.noWrap()"
+  [class.ui-tooltip--interactive]="tooltip.interactive()"
+  [class.ui-tooltip--closable]="tooltip.closable()"
   [style.left.px]="tooltip.x()"
-  [style.top.px]="tooltip.y()">
-  {{ tooltip.text() }}
+  [style.top.px]="tooltip.y()"
+  (pointerdown)="$event.stopPropagation()">
+  @if (tooltip.closable()) {
+    <button
+      type="button"
+      class="ui-tooltip__close-btn"
+      aria-label="Close"
+      (click)="onCloseClick($event)"
+      (pointerdown)="$event.stopPropagation()">
+      <lucide-icon [img]="xIcon" [size]="12"></lucide-icon>
+    </button>
+  }
+  @if (tooltip.html()) {
+    <div class="ui-tooltip__content" [innerHTML]="tooltip.html()"></div>
+  } @else {
+    {{ tooltip.text() }}
+  }
 </div>

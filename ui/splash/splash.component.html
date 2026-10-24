@@ -1,11 +1,11 @@
-@if (visible) {
+@if (isVisible) {
   <div
     class="splash"
-    [class.splash--fading]="fading"
-    [class.splash--error]="error"
+    [class.splash--fading]="isFading"
+    [class.splash--error]="isError"
     role="status"
     aria-live="polite"
-    [attr.aria-label]="status">
+    [attr.aria-label]="currentStatus">
     <div class="splash__inner">
       <div class="splash__mark" aria-hidden="true">
         <img
@@ -16,10 +16,10 @@
       </div>
 
       <div class="splash__track" aria-hidden="true">
-        <span class="splash__fill" [style.width.%]="progress"></span>
+        <span class="splash__fill" [style.width.%]="currentProgress"></span>
       </div>
 
-      <p class="splash__status">{{ status }}</p>
+      <p class="splash__status">{{ currentStatus }}</p>
     </div>
   </div>
 }

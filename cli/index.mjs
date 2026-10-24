@@ -615,6 +615,9 @@ import {
   DropdownOption,
   PopupComponent,
   PopupService,
+  SplashComponent,
+  SplashService,
+  AboutService,
   TimelineSliderComponent,
   TooltipComponent,
   BreakpointService
@@ -631,6 +634,7 @@ import { Lang } from './core/i18n/i18n.types';
     ButtonComponent,
     DropdownComponent,
     PopupComponent,
+    SplashComponent,
     TimelineSliderComponent,
     TooltipComponent
   ],
@@ -641,6 +645,8 @@ export class AppComponent {
   readonly i18n = inject(I18nService);
   readonly bp = inject(BreakpointService);
   readonly popup = inject(PopupService);
+  readonly about = inject(AboutService);
+  readonly splash = inject(SplashService);
 
   readonly globeIcon = Globe;
   readonly bookOpenIcon = BookOpen;
@@ -687,16 +693,22 @@ write(
   `@let t = i18n.t();
 
 <main class="viewport">
+  <app-splash></app-splash>
+
   <!-- Top HUD: Left Logotype + Language, Right View Switcher -->
   <header class="header">
     <div class="header__left">
       <div class="header__brand glass-panel">
-        <div class="header__logo">
+        <button
+          type="button"
+          class="header__logo"
+          aria-label="KMD Labs"
+          (click)="about.open({ lang: i18n.lang() })">
           <img
             class="header__logo-img"
             src="assets/design-system/logo/kmd-black-orange.svg"
             alt="KMD" />
-        </div>
+        </button>
         <span class="header__divider" aria-hidden="true"></span>
         <h1 class="header__app-name">${appTitle}</h1>
       </div>
@@ -802,6 +814,15 @@ write(
   &__logo {
     display: inline-flex;
     align-items: center;
+    padding: 0;
+    border: 0;
+    background: none;
+    cursor: pointer;
+    transition: opacity transition("fast");
+
+    &:hover {
+      opacity: 0.75;
+    }
   }
 
   &__logo-img {
