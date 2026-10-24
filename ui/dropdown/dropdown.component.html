@@ -5,6 +5,7 @@
   <app-button
     [variant]="variant()"
     [active]="isOpen()"
+    [iconOnly]="iconOnly()"
     [extraClass]="fullWidth() ? 'dropdown__trigger-btn--full' : ''"
     [ariaLabel]="ariaLabel() || triggerText()"
     [titleText]="ariaLabel() || selectedOption()?.label || triggerText() || null"
@@ -14,13 +15,13 @@
     }
     @if (!iconOnly()) {
       <span class="dropdown__trigger-label">{{ triggerText() }}</span>
+      <lucide-icon
+        class="dropdown__chevron"
+        [class.dropdown__chevron--open]="isOpen()"
+        [img]="chevronDownIcon"
+        [size]="13">
+      </lucide-icon>
     }
-    <lucide-icon
-      class="dropdown__chevron"
-      [class.dropdown__chevron--open]="isOpen()"
-      [img]="chevronDownIcon"
-      [size]="13">
-    </lucide-icon>
   </app-button>
 
   @if (isOpen()) {
