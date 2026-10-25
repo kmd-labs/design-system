@@ -129,3 +129,30 @@
     max-height: 80vh;
   }
 }
+
+@include respond-to("mobile-landscape") {
+  .popup-backdrop {
+    padding: 8px 12px;
+    align-items: center;
+  }
+
+  .popup-dialog {
+    max-height: calc(100vh - 16px);
+
+    &__header {
+      padding: 8px 12px 6px;
+    }
+
+    &__title {
+      font-size: font-size("base");
+    }
+
+    &__body {
+      padding: 8px 12px;
+    }
+
+    &__footer {
+      padding: 6px 12px;
+    }
+  }
+}

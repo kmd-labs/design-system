@@ -229,6 +229,7 @@ $breakpoints: (
   "mobile": 640px,
   "tablet": 960px,
   "desktop": 1280px,
+  "mobile-landscape": 500px,
 );
 
 $transitions: (
@@ -324,7 +325,11 @@ $font-sizes: (
 // ─── Mixins ───────────────────────────────────────────────────────────────────
 
 @mixin respond-to($breakpoint) {
-  @if map.has-key($breakpoints, $breakpoint) {
+  @if $breakpoint == "mobile-landscape" {
+    @media (max-height: map.get($breakpoints, "mobile-landscape")) and (orientation: landscape) and (max-width: map.get($breakpoints, "tablet")) {
+      @content;
+    }
+  } @else if map.has-key($breakpoints, $breakpoint) {
     @media (max-width: map.get($breakpoints, $breakpoint)) {
       @content;
     }

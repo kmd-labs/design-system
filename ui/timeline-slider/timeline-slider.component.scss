@@ -171,7 +171,8 @@
       width: 100%;
       height: auto;
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
+      grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
+      grid-auto-flow: column;
       gap: 4px;
       margin-bottom: 6px;
     }
@@ -193,6 +194,64 @@
 
     &__stem {
       display: none;
+    }
+  }
+
+  @include respond-to("mobile-landscape") {
+    &__row {
+      gap: 6px;
+    }
+
+    &__events {
+      position: static;
+      width: 100%;
+      height: auto;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
+      grid-auto-flow: column;
+      gap: 4px;
+      margin-bottom: 4px;
+    }
+
+    &__event {
+      position: static;
+      transform: none;
+
+      app-button {
+        width: 100%;
+
+        ::ng-deep .btn {
+          width: 100%;
+          padding: 2px 4px;
+          height: 26px;
+          min-height: 26px;
+          font-size: 10px;
+          line-height: 1.1;
+        }
+      }
+    }
+
+    &__stem {
+      display: none;
+    }
+
+    &__track {
+      height: 18px;
+    }
+
+    &__input {
+      height: 18px;
+
+      &::-webkit-slider-thumb {
+        width: 14px;
+        height: 14px;
+        margin-top: -4px;
+      }
+
+      &::-moz-range-thumb {
+        width: 14px;
+        height: 14px;
+      }
     }
   }
 }
