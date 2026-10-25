@@ -23,6 +23,29 @@
   @each $key, $value in $theme-colors {
     --color-#{$key}: #{$value};
   }
+  @each $key, $value in $spacings {
+    --spacing-#{$key}: #{$value};
+  }
+
+  // Canonical HUD & Floating Dock Tokens
+  --dock-gap: var(--spacing-lg, 16px);
+  --dock-offset-x: var(--dock-gap);
+  --dock-offset-bottom: calc(var(--dock-gap) + env(safe-area-inset-bottom, 0px));
+  --dock-clearance: calc(var(--dock-h, 115px) + var(--dock-offset-bottom) + var(--dock-gap));
+}
+
+@include respond-to("mobile") {
+  :root {
+    --dock-gap: var(--spacing-sm, 10px);
+    --dock-offset-x: var(--spacing-xs, 8px);
+  }
+}
+
+@include respond-to("mobile-landscape") {
+  :root {
+    --dock-gap: var(--spacing-xs, 8px);
+    --dock-offset-x: var(--spacing-xs, 8px);
+  }
 }
 
 *,

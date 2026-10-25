@@ -280,6 +280,20 @@ $font-sizes: (
   "xl": 1.375rem, // 22px
 );
 
+// ─── Spacing Tokens ──────────────────────────────────────────────────────────
+
+$spacings: (
+  "xxs": 4px,
+  "xs": 8px,
+  "sm": 10px,
+  "md": 12px,
+  "base": 14px,
+  "lg": 16px,
+  "xl": 20px,
+  "2xl": 24px,
+  "3xl": 32px,
+);
+
 // ─── Functions ────────────────────────────────────────────────────────────────
 
 @function color($key) {
@@ -319,6 +333,14 @@ $font-sizes: (
     @return map.get($font-sizes, $key);
   }
   @warn "Unknown font-size `#{$key}` in $font-sizes map.";
+  @return null;
+}
+
+@function spacing($key) {
+  @if map.has-key($spacings, $key) {
+    @return var(--spacing-#{$key});
+  }
+  @warn "Unknown spacing `#{$key}` in $spacings map.";
   @return null;
 }
 
