@@ -31,7 +31,7 @@
   --dock-gap: var(--spacing-lg, 16px);
   --dock-offset-x: var(--dock-gap);
   --dock-offset-bottom: calc(var(--dock-gap) + env(safe-area-inset-bottom, 0px));
-  --dock-clearance: calc(var(--dock-h, 115px) + var(--dock-offset-bottom) + var(--dock-gap));
+  --dock-clearance: calc(var(--dock-h, 140px) + var(--dock-offset-bottom) + var(--dock-gap));
 }
 
 @include respond-to("mobile") {
