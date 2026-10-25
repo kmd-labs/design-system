@@ -32,12 +32,22 @@
   --dock-offset-x: var(--dock-gap);
   --dock-offset-bottom: calc(var(--dock-gap) + env(safe-area-inset-bottom, 0px));
   --dock-clearance: calc(var(--dock-h, 140px) + var(--dock-offset-bottom) + var(--dock-gap));
+
+  // Canonical Header & Popup Top Clearance Tokens (Bottom of KMD + padding equal to top offset)
+  --header-offset-top: var(--spacing-lg, 16px);
+  --header-offset-x: var(--spacing-lg, 16px);
+  --kmd-brand-h: 42px;
+  --popup-top-padding: calc(var(--kmd-brand-h) + 2 * var(--header-offset-top));
 }
 
 @include respond-to("mobile") {
   :root {
     --dock-gap: var(--spacing-sm, 10px);
     --dock-offset-x: var(--spacing-xs, 8px);
+    --header-offset-top: var(--spacing-sm, 10px);
+    --header-offset-x: var(--spacing-xs, 8px);
+    --kmd-brand-h: 38px;
+    --popup-top-padding: calc(var(--kmd-brand-h) + 2 * var(--header-offset-top));
   }
 }
 
@@ -45,6 +55,10 @@
   :root {
     --dock-gap: var(--spacing-xs, 8px);
     --dock-offset-x: var(--spacing-xs, 8px);
+    --header-offset-top: var(--spacing-xs, 8px);
+    --header-offset-x: max(var(--spacing-xs, 8px), env(safe-area-inset-left, 8px));
+    --kmd-brand-h: 34px;
+    --popup-top-padding: calc(var(--kmd-brand-h) + 2 * var(--header-offset-top));
   }
 }
 
