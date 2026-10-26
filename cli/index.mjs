@@ -450,6 +450,7 @@ write(
 export interface Dict {
   htmlLang: string;
   docTitle: string;
+  appName: string;
   langName: string;
 
   // Top HUD & Navigation
@@ -477,6 +478,7 @@ write(
 export const EN: Dict = {
   htmlLang: 'en',
   docTitle: 'KMD · ${appTitle}',
+  appName: '${appTitle}',
   langName: 'English',
 
   // Top HUD & Navigation
@@ -504,6 +506,7 @@ write(
 export const PL: Dict = {
   htmlLang: 'pl',
   docTitle: 'KMD · ${appTitle}',
+  appName: '${appTitle}',
   langName: 'Polski',
 
   // Top HUD & Navigation
@@ -711,7 +714,7 @@ write(
             src="assets/design-system/logo/kmd-black-orange.svg"
             alt="KMD" />
           <span class="header__divider" aria-hidden="true"></span>
-          <h1 class="header__app-name">\${appTitle}</h1>
+          <h1 class="header__app-name">{{ t.appName }}</h1>
         </button>
       </div>
 
