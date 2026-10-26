@@ -695,7 +695,7 @@ write(
   `@let t = i18n.t();
 
 <main class="viewport">
-  <app-splash></app-splash>
+  <app-splash (revealed)="splash.finish()"></app-splash>
 
   <!-- Top HUD: Left Logotype + Language, Right View Switcher -->
   <header class="header" [class.header--popup-open]="isPopupOpen()">
