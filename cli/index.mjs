@@ -711,7 +711,7 @@ write(
             src="assets/design-system/logo/kmd-black-orange.svg"
             alt="KMD" />
           <span class="header__divider" aria-hidden="true"></span>
-          <h1 class="header__app-name">\${appTitle}</h1>
+          <h1 class="header__app-name">${appTitle}</h1>
         </button>
       </div>
 
