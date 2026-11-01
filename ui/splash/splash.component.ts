@@ -27,12 +27,18 @@ export class SplashComponent implements AfterViewInit, OnDestroy {
   @Input() visible?: boolean;
   @Input() fading?: boolean;
   @Input() progress?: number;
+  @Input() indeterminate?: boolean;
   @Input() status?: string;
   @Input() error?: boolean;
   @Output() revealed = new EventEmitter<void>();
 
   private emitted = false;
   private fallbackTimer: ReturnType<typeof setTimeout> | null = null;
+
+  get isIndeterminate(): boolean {
+    if (this.indeterminate !== undefined) return this.indeterminate;
+    return this.currentProgress <= 0;
+  }
 
   get isVisible(): boolean {
     return this.visible !== undefined ? this.visible : (this.splashService?.visible() ?? true);
