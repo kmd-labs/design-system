@@ -68,7 +68,7 @@
     position: absolute;
     top: calc(100% + 8px);
     left: 0;
-    min-width: 100%;
+    min-width: var(--dropdown-menu-min-width, 100%);
     width: max-content;
     max-width: calc(100vw - 20px);
     box-sizing: border-box;
@@ -110,7 +110,7 @@
     background: transparent;
     border: 1px solid transparent;
     border-radius: radius("control");
-    padding: 7px 10px;
+    padding: 7px 12px;
     display: flex;
     align-items: center;
     gap: 8px;
@@ -133,6 +133,28 @@
       border-color: color("btn-active-blue-border");
       color: color("text-bright");
       font-weight: font-weight("semibold");
+    }
+
+    &--cta {
+      margin-top: 4px;
+      background: color("accent");
+      border-color: color("accent");
+      color: #ffffff;
+      font-weight: font-weight("semibold");
+      justify-content: center;
+      text-align: center;
+      box-shadow: 0 2px 8px color("accent-glow");
+
+      .dropdown__item-label {
+        text-align: center;
+      }
+
+      &:hover {
+        background: color("accent-hover");
+        border-color: color("accent-hover");
+        color: #ffffff;
+        box-shadow: 0 4px 14px color("accent-glow");
+      }
     }
   }
 

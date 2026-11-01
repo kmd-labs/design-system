@@ -46,6 +46,33 @@
     justify-content: center;
   }
 
+  // Size variants
+  &--sm {
+    height: 28px;
+    min-height: 28px;
+    padding: 4px 8px;
+    font-size: font-size("xxs");
+
+    &.btn--icon {
+      width: 28px;
+      min-width: 28px;
+      padding: 0;
+    }
+  }
+
+  &--lg {
+    height: 40px;
+    min-height: 40px;
+    padding: 8px 16px;
+    font-size: font-size("sm");
+
+    &.btn--icon {
+      width: 40px;
+      min-width: 40px;
+      padding: 0;
+    }
+  }
+
   // Variant: ghost (e.g. close, icon-only controls)
   &--ghost {
     background: transparent;

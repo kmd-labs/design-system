@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { TooltipDirective } from '../tooltip/tooltip.directive';
 
 export type ButtonVariant = 'default' | 'ghost' | 'preset' | 'toggle' | 'play';
+export type ButtonSize = 'sm' | 'md' | 'lg';
 
 @Component({
   selector: 'app-button',
@@ -13,6 +14,7 @@ export type ButtonVariant = 'default' | 'ghost' | 'preset' | 'toggle' | 'play';
 })
 export class ButtonComponent {
   @Input() variant: ButtonVariant = 'default';
+  @Input() size: ButtonSize = 'md';
   @Input() active = false;
   @Input() hot = false;
   @Input() disabled = false;
@@ -27,6 +29,7 @@ export class ButtonComponent {
     return [
       'btn',
       `btn--${this.variant}`,
+      this.size !== 'md' ? `btn--${this.size}` : '',
       this.active ? 'btn--active' : '',
       this.hot ? 'btn--hot' : '',
       this.iconOnly ? 'btn--icon' : '',

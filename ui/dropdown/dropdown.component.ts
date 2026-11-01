@@ -28,19 +28,31 @@ export class DropdownComponent<T = string> {
   readonly value = input<T | undefined>(undefined);
   readonly label = input<string | undefined>(undefined);
   readonly icon = input<any>(null);
+  readonly activeIcon = input<any>(null);
+  readonly iconSize = input<number>(15);
   readonly variant = input<ButtonVariant>('ghost');
   readonly ariaLabel = input<string>('');
   readonly align = input<'left' | 'right'>('left');
   readonly direction = input<'down' | 'up'>('down');
   readonly fullWidth = input<boolean>(false);
   readonly iconOnly = input<boolean>(false);
+  readonly showCheck = input<boolean>(true);
+  readonly menuMinWidth = input<string | undefined>(undefined);
 
   readonly valueChange = output<T>();
+  readonly selectOption = output<DropdownOption<T>>();
 
   readonly isOpen = signal(false);
 
   readonly chevronDownIcon = ChevronDown;
   readonly checkIcon = Check;
+
+  readonly displayedIcon = computed(() => {
+    if (this.isOpen() && this.activeIcon()) {
+      return this.activeIcon();
+    }
+    return this.icon();
+  });
 
   readonly selectedOption = computed<DropdownOption<T> | undefined>(() => {
     const opts = this.options();
@@ -67,6 +79,7 @@ export class DropdownComponent<T = string> {
 
   select(opt: DropdownOption<T>) {
     this.valueChange.emit(opt.value);
+    this.selectOption.emit(opt);
     this.close();
   }
 

@@ -1,6 +1,6 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
 import { PopupService } from '../popup/popup.service';
-import { AboutModalComponent } from './about-modal.component';
+import { AboutModalComponent, getContactMailtoUrl } from './about-modal.component';
 import { ABOUT_DICTS } from './about.data';
 
 export interface OpenAboutOptions {
@@ -21,6 +21,16 @@ export class AboutService {
 
   setLang(lang: 'en' | 'pl' | 'es') {
     this.currentLang.set(lang);
+  }
+
+  getContactMailto(lang?: string): string {
+    return getContactMailtoUrl(lang ?? this.currentLang());
+  }
+
+  openContactMail(lang?: string): void {
+    if (typeof window !== 'undefined') {
+      window.location.href = this.getContactMailto(lang);
+    }
   }
 
   open(options?: OpenAboutOptions) {
