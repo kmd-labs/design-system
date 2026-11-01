@@ -1,4 +1,5 @@
 export * from './ui/badge/badge.component';
+export * from './ui/brand/brand.component';
 export * from './ui/button/button.component';
 export * from './ui/dropdown/dropdown.component';
 export * from './ui/dropdown/dropdown.model';
@@ -18,4 +19,5 @@ export * from './ui/tooltip/tooltip.directive';
 export * from './ui/tooltip/tooltip.service';
 export * from './services/breakpoint.service';
 export * from './services/theme.service';
+export * from './services/seo.service';
 export * from './utils/breakpoints';

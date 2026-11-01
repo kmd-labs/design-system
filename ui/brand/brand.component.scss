@@ -1,0 +1,237 @@
+@use "../../variables" as *;
+
+:host {
+  display: inline-flex;
+  vertical-align: middle;
+}
+
+.header__brand-wrap {
+  display: inline-flex;
+  align-items: center;
+  flex: none;
+}
+
+.header__brand {
+  display: inline-flex;
+  align-items: center;
+  height: var(--kmd-brand-h, 42px);
+  padding: 4px;
+  border-radius: radius("pill");
+  cursor: pointer;
+  flex-shrink: 0;
+  user-select: none;
+  transition:
+    background transition("fast"),
+    border-color transition("fast"),
+    box-shadow transition("fast");
+
+  &:hover .header__brand-btn {
+    background: color("btn-hover");
+  }
+}
+
+.header__brand-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0;
+  height: 34px;
+  padding: 0 10px 0 8px;
+  border-radius: radius("pill");
+  border: 0;
+  background: transparent;
+  font: inherit;
+  color: color("text-bright");
+  cursor: pointer;
+  text-decoration: none;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  transition:
+    background transition("fast"),
+    transform transition("fast");
+
+  &:hover {
+    background: color("btn-hover");
+  }
+
+  &:active {
+    background: color("btn-hover");
+    transform: scale(0.98);
+  }
+
+  &:focus-visible {
+    outline: 2px solid color("accent");
+    outline-offset: 1px;
+  }
+}
+
+.header__logo {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  line-height: 0;
+  padding: 0;
+  margin: 0;
+}
+
+.header__logo-img {
+  height: 16px;
+  width: 40px;
+  display: block;
+  object-fit: contain;
+  user-select: none;
+  pointer-events: none;
+  flex: none;
+  image-rendering: -webkit-optimize-contrast;
+}
+
+.header__brand-expand {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: 6px;
+  flex: none;
+}
+
+.header__divider {
+  width: 1px;
+  height: 16px;
+  background: color("line-strong");
+  flex: none;
+  opacity: 0.8;
+}
+
+.header__cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex: none;
+}
+
+.header__cta-icon {
+  display: inline-flex;
+  color: color("accent");
+  flex: none;
+}
+
+.header__cta-text {
+  font-size: font-size("xs");
+  font-weight: font-weight("medium");
+  color: color("text-bright");
+  white-space: nowrap;
+}
+
+// ─── Responsive Mobile Overrides ───
+@include respond-to("mobile") {
+  .header__brand {
+    height: var(--kmd-brand-h, 38px);
+    padding: 3px;
+    max-width: 48px;
+    overflow: hidden;
+    box-sizing: border-box;
+    transition:
+      max-width 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+      box-shadow 0.3s ease;
+
+    &--expanded {
+      max-width: 260px;
+      box-shadow: 0 8px 24px rgba(15, 23, 42, 0.22);
+    }
+  }
+
+  .header__brand-btn {
+    height: 32px;
+    padding: 0 5px;
+    gap: 0;
+  }
+
+  .header__brand--expanded .header__brand-btn {
+    padding: 0 8px 0 5px;
+  }
+
+  .header__logo-img {
+    height: 14px;
+    width: 35px;
+  }
+
+  .header__brand-expand {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-left: 0;
+    max-width: 0;
+    opacity: 0;
+    overflow: hidden;
+    pointer-events: none;
+    white-space: nowrap;
+    transition:
+      max-width 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+      margin-left 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+      opacity 0.25s ease;
+  }
+
+  .header__brand--expanded .header__brand-expand {
+    margin-left: 5px;
+    max-width: 220px;
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .header__divider {
+    height: 14px;
+  }
+
+  .header__cta {
+    gap: 4px;
+  }
+
+  .header__cta-text {
+    font-size: font-size("xxs");
+  }
+}
+
+@include respond-to("mobile-landscape") {
+  .header__brand {
+    height: var(--kmd-brand-h, 34px);
+    padding: 3px;
+    width: auto;
+    max-width: none;
+    overflow: visible;
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.08);
+  }
+
+  .header__brand-btn {
+    height: 28px;
+    padding: 0 8px 0 6px;
+    gap: 0;
+  }
+
+  .header__logo-img {
+    height: 13px;
+    width: 32px;
+  }
+
+  .header__brand-expand {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    margin-left: 5px;
+    max-width: none;
+    opacity: 1;
+    overflow: visible;
+    pointer-events: auto;
+    white-space: nowrap;
+  }
+
+  .header__divider {
+    height: 13px;
+  }
+
+  .header__cta {
+    gap: 4px;
+  }
+
+  .header__cta-text {
+    font-size: font-size("xxs");
+  }
+}

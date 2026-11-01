@@ -100,6 +100,7 @@ write(
         start: 'ng serve',
         build: 'ng build',
         'build:gh-pages': `ng build --base-href /${appSlug}/`,
+        'build:og': 'node scripts/generate-og.mjs',
         watch: 'ng build --watch --configuration development',
         'setup:github': 'node scripts/setup-github.mjs'
       },
@@ -414,6 +415,24 @@ write(
   <title>KMD · ${appTitle}</title>
   <base href="/">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="KMD Labs interactive scientific visualization: planetary telemetry, 3D WebGL simulation, and environmental data.">
+  <meta name="theme-color" content="#f5f7fb">
+  <link rel="icon" type="image/svg+xml" href="assets/design-system/favicon.svg">
+  <link rel="alternate icon" type="image/x-icon" href="assets/design-system/favicon.ico">
+
+  <!-- Open Graph / Social Media Preview -->
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="KMD Labs">
+  <meta property="og:title" content="KMD · ${appTitle}">
+  <meta property="og:description" content="Interactive scientific data visualization by KMD Labs.">
+  <meta property="og:image" content="https://kmd-labs.github.io/${appSlug}/assets/og-image.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="KMD · ${appTitle}">
+  <meta name="twitter:description" content="Interactive scientific data visualization by KMD Labs.">
+  <meta name="twitter:image" content="https://kmd-labs.github.io/${appSlug}/assets/og-image.png">
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -610,6 +629,7 @@ write(
 import { CommonModule } from '@angular/common';
 import { LucideAngularModule, Globe, Activity, Layers, BookOpen } from 'lucide-angular';
 import {
+  BrandComponent,
   ButtonComponent,
   DropdownComponent,
   DropdownOption,
@@ -620,7 +640,8 @@ import {
   AboutService,
   TimelineSliderComponent,
   TooltipComponent,
-  BreakpointService
+  BreakpointService,
+  SeoService
 } from '@kmd/design-system';
 import { I18nService } from './core/i18n/i18n.service';
 import { Lang } from './core/i18n/i18n.types';
@@ -631,6 +652,7 @@ import { Lang } from './core/i18n/i18n.types';
   imports: [
     CommonModule,
     LucideAngularModule,
+    BrandComponent,
     ButtonComponent,
     DropdownComponent,
     PopupComponent,
@@ -647,12 +669,21 @@ export class AppComponent {
   readonly popup = inject(PopupService);
   readonly about = inject(AboutService);
   readonly splash = inject(SplashService);
+  readonly seo = inject(SeoService);
 
   readonly globeIcon = Globe;
   readonly bookOpenIcon = BookOpen;
 
   readonly currentView = signal<string>('primary');
   readonly sliderValue = signal<number>(0);
+
+  constructor() {
+    this.seo.update({
+      title: 'KMD · ${appTitle}',
+      description: 'Interactive scientific data visualization by KMD Labs.',
+      image: 'assets/design-system/og-image.png'
+    });
+  }
 
   readonly langOptions = computed<DropdownOption<Lang>[]>(() =>
     this.i18n.langs.map(l => ({
@@ -700,20 +731,11 @@ write(
   <!-- Top HUD: Left Logotype + Language, Right View Switcher -->
   <header class="header" [class.header--popup-open]="isPopupOpen()">
     <div class="header__left">
-      <div class="header__brand glass-panel">
-        <button
-          type="button"
-          class="header__brand-btn"
-          aria-label="KMD Labs – About us"
-          (click)="about.open({ lang: i18n.lang() })">
-          <img
-            class="header__logo-img"
-            src="assets/design-system/logo/kmd-black-orange.svg"
-            alt="KMD" />
-          <span class="header__divider" aria-hidden="true"></span>
-          <h1 class="header__app-name">${appTitle}</h1>
-        </button>
-      </div>
+      <app-brand
+        [appName]="'${appTitle}'"
+        [lang]="i18n.lang()"
+        (btnClick)="about.open({ lang: i18n.lang() })">
+      </app-brand>
 
       <div class="header__settings glass-panel" role="group" [attr.aria-label]="t.changeLanguage">
         <app-dropdown
@@ -936,7 +958,123 @@ write(
 `
 );
 
-// 8. Generate scripts/setup-github.mjs for applying canonical KMD branch protection
+// 8. Generate scripts/generate-og.mjs & scripts/setup-github.mjs
+write(
+  'scripts/generate-og.mjs',
+  `#!/usr/bin/env node
+import fs from 'node:fs';
+import path from 'node:path';
+import { execSync } from 'node:child_process';
+import { fileURLToPath } from 'node:url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const root = path.resolve(__dirname, '..');
+
+const appTitle = '${appTitle}';
+const appSlug = '${appSlug}';
+
+let logoSvg = '';
+const logoCandidates = [
+  path.join(root, 'src/design-system/assets/logo/kmd-black-orange.svg'),
+  path.join(root, 'assets/design-system/logo/kmd-black-orange.svg')
+];
+for (const p of logoCandidates) {
+  if (fs.existsSync(p)) {
+    logoSvg = fs.readFileSync(p, 'utf8');
+    break;
+  }
+}
+
+const pathsMatch = logoSvg.match(/<svg[^>]*>([\\s\\S]*?)<\\/svg>/);
+const innerLogoPaths = pathsMatch ? pathsMatch[1].trim() : '';
+
+const width = 1200;
+const height = 630;
+const cardW = 1060;
+const cardH = 490;
+const cardX = (width - cardW) / 2;
+const cardY = (height - cardH) / 2;
+
+const svgContent = \`<svg width="\${width}" height="\${height}" viewBox="0 0 \${width} \${height}" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background: airy neutral-50 -->
+  <rect width="\${width}" height="\${height}" fill="#f5f7fb"/>
+
+  <!-- Subtle planetary arcs in background -->
+  <circle cx="1080" cy="110" r="280" fill="none" stroke="#e2e8f0" stroke-width="2" stroke-dasharray="8 8"/>
+  <circle cx="1080" cy="110" r="380" fill="none" stroke="#eef2f7" stroke-width="1.5"/>
+  <circle cx="120" cy="540" r="220" fill="none" stroke="#eef2f7" stroke-width="1.5"/>
+
+  <!-- Central Card Shadow & Surface -->
+  <rect x="\${cardX}" y="\${cardY + 8}" width="\${cardW}" height="\${cardH}" rx="28" fill="#e2e8f0" opacity="0.6"/>
+  <rect x="\${cardX}" y="\${cardY}" width="\${cardW}" height="\${cardH}" rx="28" fill="#ffffff" stroke="#e2e8f0" stroke-width="1.5"/>
+
+  <!-- Card Content -->
+  <g transform="translate(\${cardX + 64}, \${cardY + 54})">
+    <!-- Top Row: Exact KMD Official SVG Logotype -->
+    <g transform="translate(0, 0)">
+      <g transform="scale(0.72)">
+        \${innerLogoPaths}
+      </g>
+    </g>
+
+    <!-- Kicker -->
+    <text x="0" y="152" font-family="DejaVu-Sans, Inter, -apple-system, sans-serif" font-size="14" font-weight="bold" letter-spacing="3" fill="#D37400">INTERACTIVE DATA VISUALIZATION · OBSERVATORY</text>
+
+    <!-- App Title (Dynamic from repository) -->
+    <text x="0" y="218" font-family="DejaVu-Sans, Inter, -apple-system, sans-serif" font-size="52" font-weight="bold" fill="#0f172a">\${appTitle}</text>
+
+    <!-- App Description -->
+    <text x="0" y="274" font-family="DejaVu-Sans, Inter, -apple-system, sans-serif" font-size="22" fill="#475569">Zero-friction 3D WebGL simulation and planetary telemetry.</text>
+    <text x="0" y="308" font-family="DejaVu-Sans, Inter, -apple-system, sans-serif" font-size="20" fill="#64748b">Open scientific datasets by KMD Labs.</text>
+
+    <!-- Divider Line -->
+    <line x1="0" y1="344" x2="\${cardW - 128}" y2="344" stroke="#e2e8f0" stroke-width="1.5"/>
+
+    <!-- Bottom Footer Badges -->
+    <g transform="translate(0, 368)">
+      <!-- Repo URL Pill -->
+      <rect x="0" y="0" width="270" height="34" rx="17" fill="#fdf6ed" stroke="#f7cfa0" stroke-width="1"/>
+      <text x="135" y="22" font-family="DejaVu-Sans, Inter, -apple-system, sans-serif" font-size="13" font-weight="bold" fill="#D37400" text-anchor="middle">kmd-labs.github.io/\${appSlug}</text>
+
+      <!-- Award Pill -->
+      <rect x="284" y="0" width="320" height="34" rx="17" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1"/>
+      <text x="444" y="22" font-family="DejaVu-Sans, Inter, -apple-system, sans-serif" font-size="13" fill="#334155" text-anchor="middle">EUSPA 11th CASSINI Hackathon EU Winners</text>
+
+      <!-- Main Domain link -->
+      <text x="\${cardW - 128}" y="22" font-family="DejaVu-Sans, Inter, -apple-system, sans-serif" font-size="14" font-weight="bold" fill="#0f172a" text-anchor="end">kmd-labs.org →</text>
+    </g>
+  </g>
+</svg>\`;
+
+const assetsDir = path.join(root, 'src/assets');
+fs.mkdirSync(assetsDir, { recursive: true });
+
+const svgPath = path.join(assetsDir, 'og-image.svg');
+const pngPath = path.join(assetsDir, 'og-image.png');
+fs.writeFileSync(svgPath, svgContent, 'utf8');
+
+let converted = false;
+try {
+  execSync(\`convert -font DejaVu-Sans "\${svgPath}" "\${pngPath}"\`, { stdio: 'pipe' });
+  converted = true;
+} catch {
+  try {
+    execSync(\`rsvg-convert -w 1200 -h 630 "\${svgPath}" -o "\${pngPath}"\`, { stdio: 'pipe' });
+    converted = true;
+  } catch {}
+}
+
+if (!converted) {
+  const fallbackPng = path.join(root, 'src/design-system/assets/og-image.png');
+  if (fs.existsSync(fallbackPng)) {
+    fs.copyFileSync(fallbackPng, pngPath);
+  }
+}
+console.log('✅ Generated OpenGraph social preview assets (og-image.svg & og-image.png)');
+`
+);
+
 const protectionPayload = JSON.stringify(
   {
     required_status_checks: null,
@@ -1086,6 +1224,11 @@ try {
     'git submodule add -b main https://github.com/kmd-labs/design-system.git src/design-system',
     { cwd: targetDir, stdio: 'inherit' }
   );
+  try {
+    execSync('node scripts/generate-og.mjs', { cwd: targetDir, stdio: 'inherit' });
+  } catch (ogErr) {
+    console.warn('⚠️ Could not generate dynamic og-image automatically:', ogErr.message);
+  }
   try {
     execSync('npm install --package-lock-only --legacy-peer-deps --ignore-scripts', {
       cwd: targetDir,
