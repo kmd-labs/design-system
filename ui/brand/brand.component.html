@@ -1,0 +1,30 @@
+<div class="header__brand-wrap">
+  <div
+    class="header__brand glass-panel"
+    [class.header__brand--expanded]="isExpanded()"
+    (mouseenter)="onHover(true)"
+    (mouseleave)="onHover(false)"
+    (click)="onBrandClick($event)">
+    <button
+      type="button"
+      class="header__brand-btn"
+      [attr.aria-label]="ariaLabel()">
+      <span class="header__logo">
+        <img
+          class="header__logo-img"
+          [src]="logoSrc"
+          [alt]="logoAlt"
+          width="40"
+          height="16" />
+      </span>
+
+      <span class="header__brand-expand">
+        <span class="header__divider" aria-hidden="true"></span>
+        <span class="header__cta">
+          <lucide-icon class="header__cta-icon" [img]="ctaIcon" [size]="14"></lucide-icon>
+          <span class="header__cta-text">{{ resolvedCta() }}</span>
+        </span>
+      </span>
+    </button>
+  </div>
+</div>
