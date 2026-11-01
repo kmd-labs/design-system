@@ -16,7 +16,10 @@
       </div>
 
       <div class="splash__track" aria-hidden="true">
-        <span class="splash__fill" [style.width.%]="currentProgress"></span>
+        <span
+          class="splash__fill"
+          [class.splash__fill--indeterminate]="isIndeterminate"
+          [style.width.%]="isIndeterminate ? null : currentProgress"></span>
       </div>
 
       <p class="splash__status">{{ currentStatus }}</p>

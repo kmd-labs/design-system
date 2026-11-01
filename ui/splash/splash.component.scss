@@ -57,6 +57,12 @@
     border-radius: inherit;
     background: linear-gradient(90deg, color("accent"), color("phase-super"));
     transition: width 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+
+    &--indeterminate {
+      width: 35%;
+      min-width: 35%;
+      animation: kmd-splash-indeterminate 1.4s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+    }
   }
 
   &__status {
@@ -83,6 +89,21 @@
   }
 }
 
+@keyframes kmd-splash-indeterminate {
+  0% {
+    left: -40%;
+    width: 35%;
+  }
+  50% {
+    left: 25%;
+    width: 50%;
+  }
+  100% {
+    left: 100%;
+    width: 35%;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .splash {
     transition-duration: 0.01ms;
@@ -95,5 +116,12 @@
 
   .splash__fill {
     transition-duration: 0.01ms;
+  }
+
+  .splash__fill--indeterminate {
+    animation: none;
+    left: 0;
+    width: 100%;
+    opacity: 0.5;
   }
 }
