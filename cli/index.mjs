@@ -414,6 +414,24 @@ write(
   <title>KMD · ${appTitle}</title>
   <base href="/">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="KMD Labs interactive scientific visualization: planetary telemetry, 3D WebGL simulation, and environmental data.">
+  <meta name="theme-color" content="#f5f7fb">
+  <link rel="icon" type="image/svg+xml" href="assets/design-system/favicon.svg">
+  <link rel="alternate icon" type="image/x-icon" href="assets/design-system/favicon.ico">
+
+  <!-- Open Graph / Social Media Preview -->
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="KMD Labs">
+  <meta property="og:title" content="KMD · ${appTitle}">
+  <meta property="og:description" content="Interactive scientific data visualization by KMD Labs.">
+  <meta property="og:image" content="assets/design-system/og-image.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="KMD · ${appTitle}">
+  <meta name="twitter:description" content="Interactive scientific data visualization by KMD Labs.">
+  <meta name="twitter:image" content="assets/design-system/og-image.png">
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -610,6 +628,7 @@ write(
 import { CommonModule } from '@angular/common';
 import { LucideAngularModule, Globe, Activity, Layers, BookOpen } from 'lucide-angular';
 import {
+  BrandComponent,
   ButtonComponent,
   DropdownComponent,
   DropdownOption,
@@ -620,7 +639,8 @@ import {
   AboutService,
   TimelineSliderComponent,
   TooltipComponent,
-  BreakpointService
+  BreakpointService,
+  SeoService
 } from '@kmd/design-system';
 import { I18nService } from './core/i18n/i18n.service';
 import { Lang } from './core/i18n/i18n.types';
@@ -631,6 +651,7 @@ import { Lang } from './core/i18n/i18n.types';
   imports: [
     CommonModule,
     LucideAngularModule,
+    BrandComponent,
     ButtonComponent,
     DropdownComponent,
     PopupComponent,
@@ -647,12 +668,21 @@ export class AppComponent {
   readonly popup = inject(PopupService);
   readonly about = inject(AboutService);
   readonly splash = inject(SplashService);
+  readonly seo = inject(SeoService);
 
   readonly globeIcon = Globe;
   readonly bookOpenIcon = BookOpen;
 
   readonly currentView = signal<string>('primary');
   readonly sliderValue = signal<number>(0);
+
+  constructor() {
+    this.seo.update({
+      title: 'KMD · ${appTitle}',
+      description: 'Interactive scientific data visualization by KMD Labs.',
+      image: 'assets/design-system/og-image.png'
+    });
+  }
 
   readonly langOptions = computed<DropdownOption<Lang>[]>(() =>
     this.i18n.langs.map(l => ({
@@ -700,20 +730,11 @@ write(
   <!-- Top HUD: Left Logotype + Language, Right View Switcher -->
   <header class="header" [class.header--popup-open]="isPopupOpen()">
     <div class="header__left">
-      <div class="header__brand glass-panel">
-        <button
-          type="button"
-          class="header__brand-btn"
-          aria-label="KMD Labs – About us"
-          (click)="about.open({ lang: i18n.lang() })">
-          <img
-            class="header__logo-img"
-            src="assets/design-system/logo/kmd-black-orange.svg"
-            alt="KMD" />
-          <span class="header__divider" aria-hidden="true"></span>
-          <h1 class="header__app-name">${appTitle}</h1>
-        </button>
-      </div>
+      <app-brand
+        [appName]="'${appTitle}'"
+        [lang]="i18n.lang()"
+        (btnClick)="about.open({ lang: i18n.lang() })">
+      </app-brand>
 
       <div class="header__settings glass-panel" role="group" [attr.aria-label]="t.changeLanguage">
         <app-dropdown

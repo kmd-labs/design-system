@@ -23,6 +23,13 @@ export interface AboutText {
   metaDescription: string;
   cta: string;
   contact: string;
+  contactEmail?: string;
+  contactMailSubject?: string;
+  contactMailBody?: string;
+  contactAria?: string;
+  websiteLabel?: string;
+  websiteUrl?: string;
+  websiteAria?: string;
   openAbout: string;
   title: string;
   kicker: string;

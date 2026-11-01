@@ -11,6 +11,27 @@
           <p class="hero__lead">{{ lead }}</p>
         }
 
+        <div class="hero__actions">
+          <a
+            class="hero__action-btn hero__action-btn--contact"
+            [href]="contactMailto"
+            [attr.aria-label]="a.contactAria || a.contact">
+            <lucide-icon [img]="mailIcon" [size]="14"></lucide-icon>
+            <span>{{ a.contact }}</span>
+          </a>
+
+          <a
+            class="hero__action-btn hero__action-btn--website"
+            [href]="websiteUrl"
+            target="_blank"
+            rel="noopener noreferrer"
+            [attr.aria-label]="a.websiteAria || a.websiteLabel">
+            <lucide-icon [img]="globeIcon" [size]="14"></lucide-icon>
+            <span>{{ a.websiteLabel || 'kmd-labs.org' }}</span>
+            <lucide-icon [img]="refIcon" [size]="11"></lucide-icon>
+          </a>
+        </div>
+
         <div class="hero__refs">
           @for (ref of a.refs; track ref.href) {
             <a
