@@ -10,8 +10,8 @@
     [ariaLabel]="ariaLabel() || triggerText()"
     [titleText]="ariaLabel() || selectedOption()?.label || triggerText() || null"
     (btnClick)="toggle()">
-    @if (icon()) {
-      <lucide-icon [img]="icon()" [size]="15"></lucide-icon>
+    @if (displayedIcon()) {
+      <lucide-icon [img]="displayedIcon()" [size]="iconSize()"></lucide-icon>
     }
     @if (!iconOnly()) {
       <span class="dropdown__trigger-label">{{ triggerText() }}</span>
@@ -29,15 +29,19 @@
       class="dropdown__menu glass-panel--heavy"
       [class.dropdown__menu--right]="align() === 'right'"
       [class.dropdown__menu--up]="direction() === 'up'"
+      [style.min-width]="menuMinWidth() ?? null"
+      [style.top]="menuOffset() ? ('calc(100% + ' + menuOffset() + ')') : null"
       [attr.role]="options().length ? 'listbox' : 'region'"
       [attr.aria-label]="ariaLabel() || triggerText()">
       @if (options().length > 0) {
         @for (opt of options(); track opt.value) {
           @let isSelected = opt.value === value();
+          @let isCta = opt.cta || opt.variant === 'cta';
           <button
             type="button"
             class="dropdown__item"
-            [class.dropdown__item--selected]="isSelected"
+            [class.dropdown__item--selected]="isSelected && showCheck()"
+            [class.dropdown__item--cta]="isCta"
             role="option"
             [attr.aria-selected]="isSelected"
             (click)="select(opt)">
@@ -48,7 +52,7 @@
             @if (opt.badge) {
               <span class="dropdown__item-badge">{{ opt.badge }}</span>
             }
-            @if (isSelected) {
+            @if (isSelected && !isCta && showCheck()) {
               <lucide-icon class="dropdown__item-check" [img]="checkIcon" [size]="14"></lucide-icon>
             }
           </button>

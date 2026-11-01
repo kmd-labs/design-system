@@ -7,4 +7,7 @@ export interface DropdownOption<T = string> {
   /** Optional secondary badge or description in the menu item. */
   badge?: string;
   icon?: any;
+  /** Special action decorator/style, e.g. high-contrast accent button for contact or primary CTAs. */
+  cta?: boolean;
+  variant?: 'default' | 'cta';
 }
