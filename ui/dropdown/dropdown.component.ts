@@ -38,7 +38,6 @@ export class DropdownComponent<T = string> {
   readonly iconOnly = input<boolean>(false);
   readonly showCheck = input<boolean>(true);
   readonly menuMinWidth = input<string | undefined>(undefined);
-  readonly menuOffset = input<string | undefined>(undefined);
 
   readonly valueChange = output<T>();
   readonly selectOption = output<DropdownOption<T>>();
