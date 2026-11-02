@@ -79,6 +79,11 @@
     gap: 2px;
     z-index: 60;
     animation: panelSlideIn 0.16s ease-out;
+    background: color("panel-bg");
+    backdrop-filter: blur(var(--dropdown-menu-blur, blur-token("delicate")));
+    -webkit-backdrop-filter: blur(var(--dropdown-menu-blur, blur-token("delicate")));
+    border: 1px solid color("line-strong");
+    box-shadow: 0 12px 36px color("shadow-heavy");
 
     &--right {
       left: auto;

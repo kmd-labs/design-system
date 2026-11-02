@@ -17,8 +17,8 @@
   background: color("tooltip-bg");
   border: 1px solid color("line-strong");
   box-shadow: 0 8px 24px color("shadow-panel");
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(blur-token("md"));
+  -webkit-backdrop-filter: blur(blur-token("md"));
   padding: 6px 12px;
   border-radius: radius("card");
   width: max-content;

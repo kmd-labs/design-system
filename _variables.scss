@@ -294,6 +294,21 @@ $spacings: (
   "3xl": 32px,
 );
 
+// ─── Blur Tokens ─────────────────────────────────────────────────────────────
+
+$blurs: (
+  "none": 0px,
+  "xs": 4px,
+  "delicate": 8px,
+  "sm": 8px,
+  "md": 12px,
+  "base": 14px,
+  "panel": 14px,
+  "lg": 16px,
+  "xl": 20px,
+  "heavy": 24px,
+);
+
 // ─── Functions ────────────────────────────────────────────────────────────────
 
 @function color($key) {
@@ -344,6 +359,14 @@ $spacings: (
   @return null;
 }
 
+@function blur-token($key: "base") {
+  @if map.has-key($blurs, $key) {
+    @return var(--blur-#{$key});
+  }
+  @warn "Unknown blur `#{$key}` in $blurs map.";
+  @return null;
+}
+
 // ─── Mixins ───────────────────────────────────────────────────────────────────
 
 @mixin respond-to($breakpoint) {
@@ -367,13 +390,15 @@ $spacings: (
     background: color("panel-bg-heavy");
     border: 1px solid color("line-strong");
     box-shadow: 0 16px 48px color("shadow-heavy");
+    backdrop-filter: blur(blur-token("base"));
+    -webkit-backdrop-filter: blur(blur-token("base"));
   } @else {
     background: color("panel-bg");
     border: 1px solid color("line");
     box-shadow: 0 8px 30px color("shadow-panel");
+    backdrop-filter: blur(blur-token("panel"));
+    -webkit-backdrop-filter: blur(blur-token("panel"));
   }
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
   border-radius: radius("panel");
 }
 

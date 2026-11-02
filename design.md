@@ -206,6 +206,21 @@ Outputs:
 - **Spacings:**
   - `xxs`: `4px` | `xs`: `8px` | `sm`: `10px` | `md`: `12px` | `base`: `14px` | `lg`: `16px` | `xl`: `20px` | `2xl`: `24px` | `3xl`: `32px`
 
+### 3.5 Blur Tokens & Frosted Glass
+
+Backdrop blur filters are defined as design tokens in `$blurs` (`_variables.scss`), emitted as `--blur-*` CSS custom properties on `:root` (`_base.scss`), and accessed via the SCSS helper function `blur-token($key)`:
+
+| Blur Token | Value | Typical Usage |
+| :--- | :--- | :--- |
+| `none` | `0px` | Blur disabled / crisp passthrough |
+| `xs` | `4px` | Minimal micro-blur |
+| `delicate` / `sm` | `8px` | Dropdown floating menu cards, delicate translucent glass |
+| `md` | `12px` | Tooltips, popups, and modal dialogs |
+| `base` / `panel` | `14px` | Canonical floating HUD glass panels |
+| `lg` | `16px` | Extended glass elevation |
+| `xl` | `20px` | Strong diffusion surfaces |
+| `heavy` | `24px` | Heavy atmospheric glass scrims |
+
 ---
 
 ## 4. Responsive Breakpoints

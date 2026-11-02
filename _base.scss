@@ -26,6 +26,9 @@
   @each $key, $value in $spacings {
     --spacing-#{$key}: #{$value};
   }
+  @each $key, $value in $blurs {
+    --blur-#{$key}: #{$value};
+  }
 
   // Canonical HUD & Floating Dock Tokens
   --dock-gap: var(--spacing-lg, 16px);

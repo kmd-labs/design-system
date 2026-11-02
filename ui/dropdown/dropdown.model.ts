@@ -1,3 +1,15 @@
+export type BlurToken =
+  | 'none'
+  | 'xs'
+  | 'delicate'
+  | 'sm'
+  | 'md'
+  | 'base'
+  | 'panel'
+  | 'lg'
+  | 'xl'
+  | 'heavy';
+
 export interface DropdownOption<T = string> {
   value: T;
   /** Full label displayed inside the dropdown menu (e.g. "English", "Polski", "Español"). */
