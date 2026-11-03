@@ -9,10 +9,12 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SplashService } from './splash.service';
+import { provisionFavicon } from '../../services/seo.service';
 
 /**
  * Full-screen KMD splash loader with the official SVG logotype and progress bar.
  * Can be driven declaratively via `@Input()` properties OR automatically by injecting `SplashService`.
+ * Automatically provisions the official KMD orange circle favicon at application startup.
  */
 @Component({
   selector: 'app-splash',
@@ -23,6 +25,10 @@ import { SplashService } from './splash.service';
 })
 export class SplashComponent implements AfterViewInit, OnDestroy {
   readonly splashService = inject(SplashService, { optional: true });
+
+  constructor() {
+    provisionFavicon();
+  }
 
   @Input() visible?: boolean;
   @Input() fading?: boolean;

@@ -13,11 +13,13 @@ import { LucideAngularModule, Handshake } from 'lucide-angular';
 import { BreakpointService } from '../../services/breakpoint.service';
 import { AboutService } from '../about/about.service';
 import { ABOUT_DICTS } from '../about/about.data';
+import { provisionFavicon } from '../../services/seo.service';
 
 /**
  * Standardized KMD Labs Brand Logotype & Interactive Collaboration Pill.
  * Shows the official KMD logotype and expands smoothly to display "Open to new projects"
  * on hover (desktop/tablet) or tap (mobile). Clicking triggers the About modal.
+ * Provisions the official KMD orange circle favicon at application startup.
  */
 @Component({
   selector: 'app-brand',
@@ -29,6 +31,10 @@ import { ABOUT_DICTS } from '../about/about.data';
 export class BrandComponent {
   private readonly bp = inject(BreakpointService);
   private readonly about = inject(AboutService, { optional: true });
+
+  constructor() {
+    provisionFavicon();
+  }
 
   @Input() appName?: string;
   @Input() cta?: string;

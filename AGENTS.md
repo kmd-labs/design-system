@@ -81,6 +81,7 @@ Shared styles, UI primitives, and core utilities live in the [`kmd-labs/design-s
 - **Core Services & Utils (`@kmd/design-system/services/*`, `@kmd/design-system/utils/*`):**
   - `BreakpointService` & `breakpoints.ts`
   - `ThemeService` (stateless CSS `--color-*` token reader for WebGL/Canvas).
-  - `SeoService` (canonical URL, hreflang alternates, OpenGraph meta tags, and Twitter Cards management).
+  - `SeoService`, `provisionFavicon()`, & `provideKmdFavicon()` (canonical URL, hreflang alternates, OpenGraph meta tags, Twitter Cards, and automatic orange circle favicon provisioning).
 - **Shared Assets (`@kmd/design-system/assets/*`):**
+  - `favicon.svg` & `favicon.ico` — official KMD orange circle `#D37400` favicon (provisioned automatically at app start).
   - `og-image.png` (`assets/design-system/og-image.png`) — standardized 1200×630 repository-agnostic social media preview card.
