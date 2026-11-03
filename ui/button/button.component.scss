@@ -106,10 +106,12 @@
 
   // Variant: play button
   &--play {
+    border-radius: radius("pill");
     padding: 7px 12px;
     font-size: font-size("xs");
 
     &.btn--icon {
+      border-radius: radius("pill");
       padding: 0;
     }
 

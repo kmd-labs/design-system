@@ -1,4 +1,7 @@
-<div class="timeline-slider" [style.--thumb-color]="thumbColor()">
+<div
+  class="timeline-slider"
+  [style.--thumb-color]="thumbColor()"
+  [style.--timeline-rail-bg]="trackGradient()">
   <!-- Top: Event Buttons -->
   @if (markers().length > 0) {
     <div class="timeline-slider__events">

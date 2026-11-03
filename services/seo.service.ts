@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { ENVIRONMENT_INITIALIZER, EnvironmentProviders, Injectable, makeEnvironmentProviders } from '@angular/core';
 
 export interface SeoMetaConfig {
   title?: string;
@@ -12,6 +12,59 @@ export interface SeoMetaConfig {
   localesAlternate?: string[];
   currentLang?: string;
   supportedLangs?: string[];
+  faviconBasePath?: string;
+}
+
+/**
+ * Automatically provisions the official KMD orange circle favicon into the document `<head>`.
+ * Injects or updates both:
+ * 1. Modern SVG favicon (`type="image/svg+xml"`, `href="assets/design-system/favicon.svg"`).
+ * 2. Legacy ICO fallback icon (`type="image/x-icon"`, `href="assets/design-system/favicon.ico"`).
+ *
+ * Safe to call repeatedly and during SSR (no-op if document is undefined).
+ */
+export function provisionFavicon(basePath = 'assets/design-system'): void {
+  if (typeof document === 'undefined') return;
+
+  const cleanBase = basePath.replace(/\/$/, '');
+  const svgHref = `${cleanBase}/favicon.svg`;
+  const icoHref = `${cleanBase}/favicon.ico`;
+
+  // 1. Primary SVG favicon (crisp modern vector orange circle)
+  let svgLink = document.querySelector<HTMLLinkElement>('link[rel~="icon"][type="image/svg+xml"]');
+  if (!svgLink) {
+    svgLink = document.createElement('link');
+    svgLink.rel = 'icon';
+    svgLink.type = 'image/svg+xml';
+    document.head.appendChild(svgLink);
+  }
+  svgLink.href = svgHref;
+
+  // 2. Legacy / alternate ICO favicon
+  let icoLink = document.querySelector<HTMLLinkElement>(
+    'link[rel="alternate icon"], link[rel~="icon"]:not([type="image/svg+xml"])'
+  );
+  if (!icoLink) {
+    icoLink = document.createElement('link');
+    icoLink.rel = 'alternate icon';
+    icoLink.type = 'image/x-icon';
+    document.head.appendChild(icoLink);
+  }
+  icoLink.href = icoHref;
+}
+
+/**
+ * Angular environment provider that automatically provisions the KMD orange circle
+ * favicon into `<head>` at application startup.
+ */
+export function provideKmdFavicon(basePath = 'assets/design-system'): EnvironmentProviders {
+  return makeEnvironmentProviders([
+    {
+      provide: ENVIRONMENT_INITIALIZER,
+      multi: true,
+      useValue: () => provisionFavicon(basePath)
+    }
+  ]);
 }
 
 /**
@@ -46,6 +99,12 @@ export class SeoService {
 
     this.updateOpenGraph(config);
     this.updateTwitterCard(config);
+    this.provisionFavicon(config.faviconBasePath);
+  }
+
+  /** Provisions or updates the official KMD orange circle favicon into the document `<head>`. */
+  provisionFavicon(basePath = 'assets/design-system'): void {
+    provisionFavicon(basePath);
   }
 
   setTitle(title: string): void {

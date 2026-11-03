@@ -14,12 +14,14 @@ import { BreakpointService } from '../../services/breakpoint.service';
 import { AboutService } from '../about/about.service';
 import { ABOUT_DICTS } from '../about/about.data';
 import { PopupService } from '../popup/popup.service';
+import { provisionFavicon } from '../../services/seo.service';
 
 /**
  * Standardized KMD Labs Brand Logotype & Interactive Collaboration Pill.
  * Shows the official KMD logotype and application name. When any modal dialog or popup
  * is open (or on hover/expand when no appName is present), smoothly transitions to display
  * "Open to new projects" with the Handshake icon. Clicking triggers the About modal.
+ * Provisions the official KMD orange circle favicon at application startup.
  */
 @Component({
   selector: 'app-brand',
@@ -32,6 +34,10 @@ export class BrandComponent {
   private readonly bp = inject(BreakpointService);
   private readonly about = inject(AboutService, { optional: true });
   private readonly popup = inject(PopupService, { optional: true });
+
+  constructor() {
+    provisionFavicon();
+  }
 
   @Input() appName?: string;
   @Input() cta?: string;
