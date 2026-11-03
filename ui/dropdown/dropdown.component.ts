@@ -11,7 +11,7 @@ import {
 import { CommonModule } from '@angular/common';
 import { LucideAngularModule, Check, ChevronDown } from 'lucide-angular';
 import { ButtonComponent, ButtonVariant } from '../button/button.component';
-import { DropdownOption } from './dropdown.model';
+import { DropdownOption, BlurToken } from './dropdown.model';
 
 @Component({
   selector: 'app-dropdown',
@@ -37,6 +37,7 @@ export class DropdownComponent<T = string> {
   readonly fullWidth = input<boolean>(false);
   readonly iconOnly = input<boolean>(false);
   readonly showCheck = input<boolean>(true);
+  readonly blur = input<BlurToken | null | undefined>('delicate');
   readonly menuMinWidth = input<string | undefined>(undefined);
 
   readonly valueChange = output<T>();
