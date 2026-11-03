@@ -22,6 +22,7 @@ export class TimelineSliderComponent {
   readonly value = input.required<number>();
   readonly markers = input<TimelineMarker[]>([]);
   readonly thumbColor = input<string | undefined>(undefined);
+  readonly trackGradient = input<string | undefined>(undefined);
   readonly ariaLabel = input<string>('');
 
   readonly valueChange = output<number>();
