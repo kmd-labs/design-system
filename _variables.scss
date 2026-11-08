@@ -309,6 +309,24 @@ $blurs: (
   "heavy": 24px,
 );
 
+// ─── Opacity Tokens ──────────────────────────────────────────────────────────
+
+$opacities: (
+  "none": 0,
+  "semi-faint": 0.12,
+  "faint": 0.2,
+  "muted": 0.3,
+  "dim": 0.4,
+  "half": 0.5,
+  "medium": 0.7,
+  "strong": 0.8,
+  "solid": 1,
+  // Domain Semantic Opacities (3D Globe & Map Pins)
+  "pin-default": 0.5,
+  "pin-hover": 0.7,
+  "pin-active": 0.8,
+);
+
 // ─── Functions ────────────────────────────────────────────────────────────────
 
 @function color($key) {
@@ -364,6 +382,14 @@ $blurs: (
     @return var(--blur-#{$key});
   }
   @warn "Unknown blur `#{$key}` in $blurs map.";
+  @return null;
+}
+
+@function opacity($key) {
+  @if map.has-key($opacities, $key) {
+    @return var(--opacity-#{$key});
+  }
+  @warn "Unknown opacity `#{$key}` in $opacities map.";
   @return null;
 }
 

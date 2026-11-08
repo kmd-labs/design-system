@@ -221,6 +221,22 @@ Backdrop blur filters are defined as design tokens in `$blurs` (`_variables.scss
 | `xl` | `20px` | Strong diffusion surfaces |
 | `heavy` | `24px` | Heavy atmospheric glass scrims |
 
+### 3.6 Opacity & Translucency Tokens
+
+Opacity scales are defined in `$opacities` (`_variables.scss`), emitted as `--opacity-*` CSS custom properties on `:root` (`_base.scss`), and accessed via the SCSS function `opacity($key)` or in WebGL/Canvas via `ThemeService.getTokenOpacity($key)`:
+
+| Opacity Token | Value | Transparency | Usage |
+| :--- | :--- | :--- | :--- |
+| `none` | `0.0` | 100% transparent | Hidden states, initial transition frames |
+| `semi-faint` | `0.12` | 88% transparent | Subtle background tints, soft badges |
+| `faint` | `0.2` | 80% transparent | Ambient glows, inactive halos |
+| `muted` | `0.3` | 70% transparent | Subtle borders, muted dividers |
+| `dim` | `0.4` | 60% transparent | Dimmed backdrop textures |
+| `half` / `pin-default` | `0.5` | 50% transparent | Default / inactive 3D globe pins & overlays |
+| `medium` / `pin-hover` | `0.7` | 30% transparent | Hovered 3D globe pins & interactive elements |
+| `strong` / `pin-active` | `0.8` | 20% transparent | Active / selected 3D globe pins & focused items |
+| `solid` | `1.0` | 0% transparent | Fully opaque content |
+
 ---
 
 ## 4. Responsive Breakpoints
