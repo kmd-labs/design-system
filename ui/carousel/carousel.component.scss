@@ -21,11 +21,11 @@
   &__nav-btn {
     width: 32px;
     height: 32px;
-    border-radius: radius("full");
-    border: 1px solid color("glass-border");
-    background: color("surface-glass");
-    backdrop-filter: blur(blur-token("subtle"));
-    color: color("text-muted");
+    border-radius: radius("pill");
+    border: 1px solid color("line");
+    background: color("panel-bg");
+    backdrop-filter: blur(blur-token("delicate"));
+    color: color("text-dim");
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -36,7 +36,7 @@
     &:hover {
       color: color("text-main");
       background: color("btn-hover");
-      border-color: color("line");
+      border-color: color("line-strong");
       transform: scale(1.05);
     }
 
@@ -62,10 +62,10 @@
 
   &__pill {
     position: relative;
-    border: 1px solid color("glass-border");
-    background: color("surface-glass");
-    backdrop-filter: blur(blur-token("subtle"));
-    color: color("text-muted");
+    border: 1px solid color("line");
+    background: color("panel-bg");
+    backdrop-filter: blur(blur-token("delicate"));
+    color: color("text-dim");
     font: inherit;
     cursor: pointer;
     display: inline-flex;
@@ -91,7 +91,7 @@
       width: 32px;
       height: 32px;
       padding: 3px;
-      border-radius: radius("full");
+      border-radius: radius("pill");
       opacity: 0.85;
 
       &.is-active {
@@ -107,7 +107,7 @@
     &:hover {
       color: color("text-main");
       background: color("btn-hover");
-      border-color: color("line");
+      border-color: color("line-strong");
       opacity: 1;
     }
 
@@ -128,7 +128,7 @@
   &__pill-avatar {
     width: 24px;
     height: 24px;
-    border-radius: radius("full");
+    border-radius: radius("pill");
     object-fit: cover;
     flex-shrink: 0;
     display: block;
