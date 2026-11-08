@@ -29,6 +29,9 @@
   @each $key, $value in $blurs {
     --blur-#{$key}: #{$value};
   }
+  @each $key, $value in $opacities {
+    --opacity-#{$key}: #{$value};
+  }
 
   // Canonical HUD & Floating Dock Tokens
   --dock-gap: var(--spacing-lg, 16px);

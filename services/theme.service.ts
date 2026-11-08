@@ -23,4 +23,14 @@ export class ThemeService {
       .trim();
     return val || fallback;
   }
+
+  /** Reads `--opacity-<token>` from `:root` with a numerical fallback. */
+  getTokenOpacity(token: string, fallback = 1.0): number {
+    if (typeof document === 'undefined') return fallback;
+    const val = getComputedStyle(document.documentElement)
+      .getPropertyValue(`--opacity-${token}`)
+      .trim();
+    const num = parseFloat(val);
+    return isNaN(num) ? fallback : num;
+  }
 }
