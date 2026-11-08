@@ -70,7 +70,7 @@
     left: 0;
     min-width: var(--dropdown-menu-min-width, 100%);
     width: max-content;
-    max-width: calc(100vw - 20px);
+    max-width: calc(100vw - var(--dropdown-fence-padding, 12px) * 2);
     box-sizing: border-box;
     padding: 5px;
     border-radius: radius("card");
@@ -84,6 +84,7 @@
     -webkit-backdrop-filter: blur(var(--dropdown-menu-blur, blur-token("delicate")));
     border: 1px solid color("line-strong");
     box-shadow: 0 12px 36px color("shadow-heavy");
+    translate: var(--dropdown-menu-shift-x, 0px) 0px;
 
     &--right {
       left: auto;
@@ -99,11 +100,12 @@
   &__custom {
     padding: 6px 8px;
     min-width: 224px;
-    max-width: calc(100vw - 24px);
+    max-width: calc(100vw - var(--dropdown-fence-padding, 12px) * 2);
 
     @include respond-to("mobile") {
       padding: 5px 6px;
       min-width: 180px;
+      max-width: calc(100vw - var(--dropdown-fence-padding, 12px) * 2);
     }
   }
 
