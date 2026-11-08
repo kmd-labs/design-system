@@ -26,10 +26,12 @@
 
   @if (isOpen()) {
     <div
+      #menuRef
       class="dropdown__menu"
       [class.dropdown__menu--right]="align() === 'right'"
       [class.dropdown__menu--up]="direction() === 'up'"
       [style.min-width]="menuMinWidth() ?? null"
+      [style.--dropdown-fence-padding]="fencePadding() + 'px'"
       [style.--dropdown-menu-blur]="blur() ? 'var(--blur-' + blur() + ')' : '0px'"
       [attr.role]="options().length ? 'listbox' : 'region'"
       [attr.aria-label]="ariaLabel() || triggerText()">

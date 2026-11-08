@@ -2,6 +2,7 @@ import {
   Component,
   ElementRef,
   HostListener,
+  ViewChild,
   computed,
   inject,
   input,
@@ -39,6 +40,16 @@ export class DropdownComponent<T = string> {
   readonly showCheck = input<boolean>(true);
   readonly blur = input<BlurToken | null | undefined>('delicate');
   readonly menuMinWidth = input<string | undefined>(undefined);
+  readonly fencePadding = input<number>(12);
+
+  private currentMenuEl: HTMLElement | null = null;
+
+  @ViewChild('menuRef') set menuRef(ref: ElementRef<HTMLElement> | undefined) {
+    this.currentMenuEl = ref?.nativeElement ?? null;
+    if (this.currentMenuEl) {
+      this.adjustMenuFence(this.currentMenuEl);
+    }
+  }
 
   readonly valueChange = output<T>();
   readonly selectOption = output<DropdownOption<T>>();
@@ -98,5 +109,36 @@ export class DropdownComponent<T = string> {
     if (this.isOpen()) {
       this.close();
     }
+  }
+
+  @HostListener('window:resize')
+  @HostListener('window:orientationchange')
+  onWindowResize() {
+    if (this.isOpen() && this.currentMenuEl) {
+      this.adjustMenuFence(this.currentMenuEl);
+    }
+  }
+
+  private adjustMenuFence(menu: HTMLElement) {
+    if (typeof window === 'undefined') return;
+    menu.style.setProperty('--dropdown-menu-shift-x', '0px');
+
+    requestAnimationFrame(() => {
+      if (!this.isOpen() || this.currentMenuEl !== menu) return;
+      const rect = menu.getBoundingClientRect();
+      const fence = this.fencePadding();
+      const viewportWidth = window.innerWidth;
+
+      let shift = 0;
+      if (rect.left < fence) {
+        shift = fence - rect.left;
+      } else if (rect.right > viewportWidth - fence) {
+        shift = (viewportWidth - fence) - rect.right;
+      }
+
+      if (Math.abs(shift) > 0.5) {
+        menu.style.setProperty('--dropdown-menu-shift-x', `${Math.round(shift)}px`);
+      }
+    });
   }
 }
