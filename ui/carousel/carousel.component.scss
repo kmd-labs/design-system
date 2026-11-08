@@ -12,10 +12,11 @@
   &__controls {
     display: flex;
     align-items: center;
-    justify-content: center;
-    gap: 8px;
+    justify-content: space-between;
+    width: 100%;
     margin-bottom: 24px;
-    padding: 0 8px;
+    padding: 0 16px;
+    box-sizing: border-box;
   }
 
   &__nav-btn {
@@ -54,6 +55,8 @@
     overflow-x: auto;
     scrollbar-width: none;
     padding: 2px;
+    flex: 0 1 auto;
+    max-width: calc(100% - 88px);
 
     &::-webkit-scrollbar {
       display: none;
@@ -197,6 +200,11 @@
 
     &.is-animating {
       transition: transform 420ms cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    &.is-snapping .carousel__slide-wrap,
+    &:not(.is-animating) .carousel__slide-wrap {
+      transition: none !important;
     }
   }
 

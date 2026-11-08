@@ -9,6 +9,7 @@ import {
   OnInit,
   Output,
   TemplateRef,
+  ViewChild,
   computed,
   inject,
   input,
@@ -58,8 +59,10 @@ export class CarouselComponent<T = any> implements OnInit, OnDestroy {
   readonly chevronRightIcon = ChevronRight;
 
   // Internal reactive state
+  @ViewChild('trackEl') trackEl?: ElementRef<HTMLElement>;
   readonly trackIndex = signal(1);
   readonly transitionEnabled = signal(true);
+  readonly isSnapping = signal(false);
   readonly isPaused = signal(false);
   readonly dragOffsetPx = signal(0);
   readonly isDragging = signal(false);
@@ -163,6 +166,7 @@ export class CarouselComponent<T = any> implements OnInit, OnDestroy {
 
   onTrackTransitionEnd(event: TransitionEvent): void {
     if (event.propertyName !== 'transform') return;
+    if (event.target !== event.currentTarget) return;
     const list = this.items();
     if (!list || list.length === 0) return;
     const count = list.length;
@@ -171,14 +175,33 @@ export class CarouselComponent<T = any> implements OnInit, OnDestroy {
     // Boundary check for infinite loop
     if (current === 0) {
       // Landed on prefix clone -> snap silently to real last slide
+      this.isSnapping.set(true);
       this.transitionEnabled.set(false);
       this.trackIndex.set(count);
       this.cdr.detectChanges();
+      this.forceTrackReflow();
+      requestAnimationFrame(() => {
+        this.transitionEnabled.set(true);
+        this.isSnapping.set(false);
+      });
     } else if (current === count + 1) {
       // Landed on suffix clone -> snap silently to real first slide
+      this.isSnapping.set(true);
       this.transitionEnabled.set(false);
       this.trackIndex.set(1);
       this.cdr.detectChanges();
+      this.forceTrackReflow();
+      requestAnimationFrame(() => {
+        this.transitionEnabled.set(true);
+        this.isSnapping.set(false);
+      });
+    }
+  }
+
+  private forceTrackReflow(): void {
+    const el = this.trackEl?.nativeElement;
+    if (el) {
+      void el.offsetHeight;
     }
   }
 

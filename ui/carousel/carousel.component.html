@@ -94,8 +94,10 @@
     (pointercancel)="onPointerCancel($event)"
     (dragstart)="$event.preventDefault()">
     <div
+      #trackEl
       class="carousel__track"
       [class.is-animating]="transitionEnabled()"
+      [class.is-snapping]="isSnapping()"
       [style.transform]="'translateX(calc(-1 * ' + trackIndex() + ' * (var(--slide-width) + var(--slide-gap)) + ' + dragOffsetPx() + 'px))'"
       (transitionend)="onTrackTransitionEnd($event)">
       <div
