@@ -433,6 +433,28 @@ export class HeaderComponent {
 }
 ```
 
+### 6.8 Carousel (`CarouselComponent` / `app-carousel`)
+Smooth, infinite looped carousel with touch/mouse swipe, edge fade mask, and responsive navigation pills:
+
+```html
+<app-carousel
+  [items]="projects"
+  [pills]="projectPills"
+  [slideWidth]="'clamp(280px, 80vw, 440px)'"
+  (activeIndexChange)="onActiveSlideChange($event)">
+  <ng-template let-proj let-isActive="isActive" let-hasDragged="hasDragged">
+    <article class="card" [class.is-active]="isActive">
+      <!-- Custom projected slide card -->
+    </article>
+  </ng-template>
+</app-carousel>
+```
+
+- **Numeric Mode:** Inactive pills display numbers (`2`, `3`), active pill displays `1. Title`.
+- **Avatar Mode:** Inactive pills display teammate photo, active pill expands to photo + full name.
+- **Autoplay & Pause:** Optional `[autoPlayMs]` with active pill progress fill, paused on hover/focus.
+
+
 ---
 
 ## 7. Official Brand Assets
