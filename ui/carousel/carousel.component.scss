@@ -171,6 +171,9 @@
     position: relative;
     touch-action: pan-y;
     cursor: grab;
+    padding: 20px 0 44px;
+    margin-top: -20px;
+    margin-bottom: -44px;
     mask-image: linear-gradient(
       to right,
       transparent 0,
