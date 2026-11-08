@@ -73,6 +73,7 @@ export class CarouselComponent<T = any> implements OnInit, OnDestroy {
   private pointerStartY = 0;
   private isHorizontalDrag = false;
   private activePointerId?: number;
+  private lastNavTime = 0;
   hasDragged = false;
 
   readonly activeRealIndex = computed(() => {
@@ -141,11 +142,45 @@ export class CarouselComponent<T = any> implements OnInit, OnDestroy {
   }
 
   prev(isUserAction = true): void {
+    const now = performance.now();
+    if (isUserAction && now - this.lastNavTime < 160) {
+      return;
+    }
+    if (isUserAction) {
+      this.lastNavTime = now;
+    }
+    if (this.isSnapping()) return;
+
     if (isUserAction && this.stopOnInteraction()) {
       this.markUserInteracted();
     }
+
+    const list = this.items();
+    if (!list || list.length <= 1) return;
+    const count = list.length;
+
+    if (this.trackIndex() <= 0) {
+      // Landed on/before prefix clone -> silently snap to last real slide, then animate backwards
+      this.isSnapping.set(true);
+      this.transitionEnabled.set(false);
+      this.trackIndex.set(count);
+      this.cdr.detectChanges();
+      this.forceTrackReflow();
+
+      requestAnimationFrame(() => {
+        this.isSnapping.set(false);
+        this.transitionEnabled.set(true);
+        this.trackIndex.set(count - 1);
+        this.notifyActiveChange();
+        if (!this.userInteracted()) {
+          this.restartAutoPlay();
+        }
+      });
+      return;
+    }
+
     this.transitionEnabled.set(true);
-    this.trackIndex.update((i) => i - 1);
+    this.trackIndex.update((i) => Math.max(i - 1, 0));
     this.notifyActiveChange();
     if (!this.userInteracted()) {
       this.restartAutoPlay();
@@ -153,11 +188,45 @@ export class CarouselComponent<T = any> implements OnInit, OnDestroy {
   }
 
   next(isUserAction = true): void {
+    const now = performance.now();
+    if (isUserAction && now - this.lastNavTime < 160) {
+      return;
+    }
+    if (isUserAction) {
+      this.lastNavTime = now;
+    }
+    if (this.isSnapping()) return;
+
     if (isUserAction && this.stopOnInteraction()) {
       this.markUserInteracted();
     }
+
+    const list = this.items();
+    if (!list || list.length <= 1) return;
+    const count = list.length;
+
+    if (this.trackIndex() >= count + 1) {
+      // Landed on/after suffix clone -> silently snap to first real slide, then animate forwards
+      this.isSnapping.set(true);
+      this.transitionEnabled.set(false);
+      this.trackIndex.set(1);
+      this.cdr.detectChanges();
+      this.forceTrackReflow();
+
+      requestAnimationFrame(() => {
+        this.isSnapping.set(false);
+        this.transitionEnabled.set(true);
+        this.trackIndex.set(2);
+        this.notifyActiveChange();
+        if (!this.userInteracted()) {
+          this.restartAutoPlay();
+        }
+      });
+      return;
+    }
+
     this.transitionEnabled.set(true);
-    this.trackIndex.update((i) => i + 1);
+    this.trackIndex.update((i) => Math.min(i + 1, count + 1));
     this.notifyActiveChange();
     if (!this.userInteracted()) {
       this.restartAutoPlay();
@@ -173,7 +242,7 @@ export class CarouselComponent<T = any> implements OnInit, OnDestroy {
     const current = this.trackIndex();
 
     // Boundary check for infinite loop
-    if (current === 0) {
+    if (current <= 0) {
       // Landed on prefix clone -> snap silently to real last slide
       this.isSnapping.set(true);
       this.transitionEnabled.set(false);
@@ -184,7 +253,7 @@ export class CarouselComponent<T = any> implements OnInit, OnDestroy {
         this.transitionEnabled.set(true);
         this.isSnapping.set(false);
       });
-    } else if (current === count + 1) {
+    } else if (current >= count + 1) {
       // Landed on suffix clone -> snap silently to real first slide
       this.isSnapping.set(true);
       this.transitionEnabled.set(false);
