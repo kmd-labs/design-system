@@ -36,6 +36,7 @@ export class CarouselComponent<T = any> implements OnInit, OnDestroy {
   readonly prevAria = input<string>('Previous');
   readonly nextAria = input<string>('Next');
   readonly autoPlayMs = input<number>(0);
+  readonly stopOnInteraction = input<boolean>(true);
   readonly slideWidth = input<string>('clamp(280px, 80vw, 440px)');
   readonly slideGap = input<string>('16px');
 
@@ -62,6 +63,7 @@ export class CarouselComponent<T = any> implements OnInit, OnDestroy {
   readonly isPaused = signal(false);
   readonly dragOffsetPx = signal(0);
   readonly isDragging = signal(false);
+  readonly userInteracted = signal(false);
 
   private autoTimer?: ReturnType<typeof setInterval>;
   private pointerStartX = 0;
@@ -114,7 +116,15 @@ export class CarouselComponent<T = any> implements OnInit, OnDestroy {
     this.isPaused.set(paused);
   }
 
-  select(realIndex: number): void {
+  markUserInteracted(): void {
+    this.userInteracted.set(true);
+    this.stopAutoPlay();
+  }
+
+  select(realIndex: number, isUserAction = true): void {
+    if (isUserAction && this.stopOnInteraction()) {
+      this.markUserInteracted();
+    }
     const list = this.items();
     if (!list || list.length === 0) return;
     const count = list.length;
@@ -122,21 +132,33 @@ export class CarouselComponent<T = any> implements OnInit, OnDestroy {
     this.transitionEnabled.set(true);
     this.trackIndex.set(target + 1);
     this.notifyActiveChange();
-    this.restartAutoPlay();
+    if (!this.userInteracted()) {
+      this.restartAutoPlay();
+    }
   }
 
-  prev(): void {
+  prev(isUserAction = true): void {
+    if (isUserAction && this.stopOnInteraction()) {
+      this.markUserInteracted();
+    }
     this.transitionEnabled.set(true);
     this.trackIndex.update((i) => i - 1);
     this.notifyActiveChange();
-    this.restartAutoPlay();
+    if (!this.userInteracted()) {
+      this.restartAutoPlay();
+    }
   }
 
-  next(): void {
+  next(isUserAction = true): void {
+    if (isUserAction && this.stopOnInteraction()) {
+      this.markUserInteracted();
+    }
     this.transitionEnabled.set(true);
     this.trackIndex.update((i) => i + 1);
     this.notifyActiveChange();
-    this.restartAutoPlay();
+    if (!this.userInteracted()) {
+      this.restartAutoPlay();
+    }
   }
 
   onTrackTransitionEnd(event: TransitionEvent): void {
@@ -162,6 +184,9 @@ export class CarouselComponent<T = any> implements OnInit, OnDestroy {
 
   onPointerDown(event: PointerEvent): void {
     if (event.pointerType === 'mouse' && event.button !== 0) return;
+    if (this.stopOnInteraction()) {
+      this.markUserInteracted();
+    }
     this.activePointerId = event.pointerId;
     this.pointerStartX = event.clientX;
     this.pointerStartY = event.clientY;
@@ -215,11 +240,16 @@ export class CarouselComponent<T = any> implements OnInit, OnDestroy {
 
   onSlideClick(slideIndex: number): void {
     if (this.hasDragged) return;
+    if (this.stopOnInteraction()) {
+      this.markUserInteracted();
+    }
     if (this.trackIndex() !== slideIndex) {
       this.transitionEnabled.set(true);
       this.trackIndex.set(slideIndex);
       this.notifyActiveChange();
-      this.restartAutoPlay();
+      if (!this.userInteracted()) {
+        this.restartAutoPlay();
+      }
     }
   }
 
@@ -234,11 +264,14 @@ export class CarouselComponent<T = any> implements OnInit, OnDestroy {
     this.isHorizontalDrag = false;
 
     if (wasDragging) {
+      if (this.stopOnInteraction()) {
+        this.markUserInteracted();
+      }
       const threshold = 45;
       if (dx < -threshold) {
-        this.next();
+        this.next(false);
       } else if (dx > threshold) {
-        this.prev();
+        this.prev(false);
       }
     }
 
@@ -248,7 +281,9 @@ export class CarouselComponent<T = any> implements OnInit, OnDestroy {
     }, 100);
 
     this.isPaused.set(false);
-    this.restartAutoPlay();
+    if (!this.userInteracted()) {
+      this.restartAutoPlay();
+    }
   }
 
   private releasePointer(event: PointerEvent): void {
@@ -270,6 +305,7 @@ export class CarouselComponent<T = any> implements OnInit, OnDestroy {
 
   private restartAutoPlay(): void {
     this.stopAutoPlay();
+    if (this.userInteracted() && this.stopOnInteraction()) return;
     const interval = this.autoPlayMs();
     if (interval <= 0) return;
 
@@ -277,7 +313,7 @@ export class CarouselComponent<T = any> implements OnInit, OnDestroy {
       this.autoTimer = setInterval(() => {
         if (this.isPaused() || this.isDragging()) return;
         this.zone.run(() => {
-          this.next();
+          this.next(false);
         });
       }, interval);
     });

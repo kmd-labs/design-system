@@ -68,7 +68,7 @@
         <!-- Progress Fill Bar for Autoplay -->
         <span
           class="carousel__pill-progress"
-          *ngIf="activeRealIndex() === i && autoPlayMs() > 0"
+          *ngIf="activeRealIndex() === i && autoPlayMs() > 0 && !userInteracted()"
           [style.animationDuration.ms]="autoPlayMs()"
           [class.is-paused]="isPaused()">
         </span>
