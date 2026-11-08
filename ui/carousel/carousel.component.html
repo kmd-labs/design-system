@@ -2,6 +2,7 @@
   class="carousel"
   [style.--slide-width]="slideWidth()"
   [style.--slide-gap]="slideGap()"
+  [style.--carousel-pill-active-max-width]="pillMaxWidth() || null"
   (pointerenter)="setPaused(true)"
   (pointerleave)="setPaused(false)"
   (focusin)="setPaused(true)"
@@ -32,6 +33,7 @@
         [class.is-active]="activeRealIndex() === i"
         [attr.aria-selected]="activeRealIndex() === i"
         [attr.aria-label]="pill.ariaLabel || (pill.avatar ? pill.label : (i + 1) + '. ' + pill.label)"
+        [title]="pill.ariaLabel || (pill.avatar ? pill.label : (i + 1) + '. ' + pill.label)"
         (click)="select(i)">
         
         <!-- Case 1: Avatar Pill (e.g. Team Members) -->
@@ -44,7 +46,8 @@
             height="24" />
           <span
             class="carousel__pill-name font-mono"
-            *ngIf="activeRealIndex() === i">
+            *ngIf="activeRealIndex() === i"
+            [title]="pill.label">
             {{ pill.label }}
           </span>
         </ng-container>
@@ -54,7 +57,8 @@
           <!-- Active: 1. El Niño -->
           <span
             class="carousel__pill-name font-mono"
-            *ngIf="activeRealIndex() === i">
+            *ngIf="activeRealIndex() === i"
+            [title]="(i + 1) + '. ' + pill.label">
             {{ (i + 1) + '. ' + pill.label }}
           </span>
           <!-- Inactive: only number (2, 3, etc.) -->

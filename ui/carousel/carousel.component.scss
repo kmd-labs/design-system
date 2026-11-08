@@ -17,6 +17,10 @@
     margin-bottom: 24px;
     padding: 0 16px;
     box-sizing: border-box;
+
+    @include respond-to("mobile") {
+      padding: 0 12px;
+    }
   }
 
   &__nav-btn {
@@ -55,8 +59,14 @@
     overflow-x: auto;
     scrollbar-width: none;
     padding: 2px;
-    flex: 0 1 auto;
-    max-width: calc(100% - 88px);
+    flex: 1 1 auto;
+    min-width: 0;
+    max-width: calc(100% - 76px);
+
+    @include respond-to("mobile") {
+      gap: 4px;
+      max-width: calc(100% - 72px);
+    }
 
     &::-webkit-scrollbar {
       display: none;
@@ -77,6 +87,7 @@
     white-space: nowrap;
     user-select: none;
     overflow: hidden;
+    min-width: 0;
     transition: all transition("fast");
 
     &--numeric {
@@ -84,9 +95,17 @@
       height: 28px;
       padding: 0 8px;
       border-radius: radius("pill");
+      flex-shrink: 0;
 
       &.is-active {
         padding: 0 12px;
+        flex-shrink: 1;
+        max-width: var(--carousel-pill-active-max-width, 240px);
+
+        @include respond-to("mobile") {
+          padding: 0 10px;
+          max-width: var(--carousel-pill-active-max-width-mobile, 160px);
+        }
       }
     }
 
@@ -96,6 +115,7 @@
       padding: 3px;
       border-radius: radius("pill");
       opacity: 0.85;
+      flex-shrink: 0;
 
       &.is-active {
         width: auto;
@@ -104,6 +124,14 @@
         border-radius: radius("pill");
         gap: 8px;
         opacity: 1;
+        flex-shrink: 1;
+        max-width: var(--carousel-pill-avatar-active-max-width, 260px);
+
+        @include respond-to("mobile") {
+          padding: 0 10px 0 4px;
+          gap: 6px;
+          max-width: var(--carousel-pill-avatar-active-max-width-mobile, 170px);
+        }
       }
     }
 
@@ -142,6 +170,12 @@
     font-weight: font-weight("bold");
     letter-spacing: 0.02em;
     color: color("text-main");
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    min-width: 0;
+    max-width: 100%;
+    display: inline-block;
   }
 
   &__pill-number {

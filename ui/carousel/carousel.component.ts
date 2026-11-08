@@ -40,6 +40,7 @@ export class CarouselComponent<T = any> implements OnInit, OnDestroy {
   readonly stopOnInteraction = input<boolean>(true);
   readonly slideWidth = input<string>('clamp(280px, 80vw, 440px)');
   readonly slideGap = input<string>('16px');
+  readonly pillMaxWidth = input<string>('');
 
   // Outputs
   @Output() activeIndexChange = new EventEmitter<number>();
