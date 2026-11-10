@@ -8,6 +8,13 @@
 .carousel {
   position: relative;
   width: 100%;
+  box-sizing: border-box;
+
+  @include respond-to("tablet") {
+    width: 100vw;
+    margin-left: calc(50% - 50vw);
+    margin-right: calc(50% - 50vw);
+  }
 
   &__controls {
     display: flex;
@@ -208,37 +215,21 @@
     padding: 20px 0 44px;
     margin-top: -20px;
     margin-bottom: -44px;
+    // Fade to 0% Opacity Mask at left & right edges (symmetric both sides)
     mask-image: linear-gradient(
       to right,
-      transparent 0,
-      black 28px,
-      black calc(100% - 28px),
+      transparent 0%,
+      black 6%,
+      black 94%,
       transparent 100%
     );
     -webkit-mask-image: linear-gradient(
       to right,
-      transparent 0,
-      black 28px,
-      black calc(100% - 28px),
+      transparent 0%,
+      black 6%,
+      black 94%,
       transparent 100%
     );
-
-    @include respond-to("mobile") {
-      mask-image: linear-gradient(
-        to right,
-        transparent 0%,
-        black 10%,
-        black 90%,
-        transparent 100%
-      );
-      -webkit-mask-image: linear-gradient(
-        to right,
-        transparent 0%,
-        black 10%,
-        black 90%,
-        transparent 100%
-      );
-    }
 
     &.is-dragging {
       cursor: grabbing;
@@ -250,6 +241,7 @@
     display: flex;
     gap: var(--slide-gap, 16px);
     padding-left: calc(50% - (var(--slide-width) / 2));
+    padding-right: calc(50% - (var(--slide-width) / 2));
     will-change: transform;
 
     &.is-animating {
