@@ -223,6 +223,23 @@
       transparent 100%
     );
 
+    @include respond-to("mobile") {
+      mask-image: linear-gradient(
+        to right,
+        transparent 0%,
+        black 10%,
+        black 90%,
+        transparent 100%
+      );
+      -webkit-mask-image: linear-gradient(
+        to right,
+        transparent 0%,
+        black 10%,
+        black 90%,
+        transparent 100%
+      );
+    }
+
     &.is-dragging {
       cursor: grabbing;
       user-select: none;
