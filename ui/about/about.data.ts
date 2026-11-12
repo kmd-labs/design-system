@@ -24,8 +24,8 @@ export const TEAM_MEMBERS: TeamMember[] = [
 
 export const ABOUT_DICTS: Record<'en' | 'pl' | 'es', AboutText> = {
   en: {
-    docTitle: 'About us – KMD Labs, interactive data visualisations',
-    metaDescription: 'Meet KMD Labs, a team of three building interactive data visualisations: data engineering, machine learning, 3D graphics and cartography. Open to new projects.',
+    docTitle: 'About us – KMD Labs, interactive data visualizations',
+    metaDescription: 'Meet KMD Labs, a team of three building interactive data visualizations: data engineering, machine learning, 3D graphics and cartography. Open to new projects.',
     cta: 'Open to new projects',
     contact: 'Contact',
     contactEmail: 'hello@kmd-labs.org',
@@ -40,7 +40,7 @@ export const ABOUT_DICTS: Record<'en' | 'pl' | 'es', AboutText> = {
     kicker: 'laboratory',
     leads: [
       'kmd-labs is a three-person team that grew out of Viadrus AI, the first Polish team to win the European final of the CASSINI hackathon run by the European Union Agency for the Space Programme (EUSPA). Our winning solution used satellite data to detect leaks in water supply networks early.',
-      'After the final we decided to pool the computing power of our grey matter. Each of us comes from a different field, but we are bound by a passion for geoinformatics and satellite data, as well as for anomaly detection, machine learning, software development and geovisualisation.',
+      'After the final we decided to pool the computing power of our grey matter. Each of us comes from a different field, but we are bound by a passion for geoinformatics and satellite data, as well as for anomaly detection, machine learning, software development and geovisualization.',
       'Got data and no idea how to show it on a map or in space? Write to us!'
     ],
     refs: [
@@ -68,7 +68,7 @@ export const ABOUT_DICTS: Record<'en' | 'pl' | 'es', AboutText> = {
     photoSoon: 'Photo coming soon',
     linkedinAria: name => `LinkedIn profile – ${name}`,
     githubAria: name => `GitHub profile – ${name}`,
-    footer: 'KMD · interactive data visualisation',
+    footer: 'KMD · interactive data visualization',
     people: [
       {
         bio: 'An environmental engineer by training and an AI engineer by choice. My adventure with code began in 2019 with three.js and generative art, which led to building my own augmented reality (AR) solutions. Today I focus on artificial intelligence and machine learning, connecting technology with solving real problems – as shown by winning the 11th edition of the CASSINI hackathon. Beyond coding I contribute to open source, play games, make music and take photos.',
@@ -79,8 +79,8 @@ export const ABOUT_DICTS: Record<'en' | 'pl' | 'es', AboutText> = {
         tasks: ['Data engineering', 'Machine learning', 'Data analytics', 'Data acquisition', 'Data quality']
       },
       {
-        bio: 'I am a graduate of Marine Geography at the Faculty of Earth Sciences, University of Szczecin; of Geoinformation at the Faculty of Geographical and Geological Sciences, Adam Mickiewicz University in Poznań; and of Artificial Intelligence in Corporate Finance and Controlling at Kozminski University. For 12 years I have worked as a functional consultant for ERP-class systems. After hours I build systems that detect anomalies in financial and satellite data using machine learning. Creating geovisualisations is another great passion of mine. I have been developing my artificial intelligence skills for 4 years. I believe the future belongs to domain experts who can use AI effectively as a tool in their everyday work. Outside work I am into strength training, board games, Magic: The Gathering and gardening.',
-        tasks: ['Geoinformatics', 'Geovisualisation', 'Anomaly detection', 'Machine learning', 'Artificial intelligence']
+        bio: 'I am a graduate of Marine Geography at the Faculty of Earth Sciences, University of Szczecin; of Geoinformation at the Faculty of Geographical and Geological Sciences, Adam Mickiewicz University in Poznań; and of Artificial Intelligence in Corporate Finance and Controlling at Kozminski University. For 12 years I have worked as a functional consultant for ERP-class systems. After hours I build systems that detect anomalies in financial and satellite data using machine learning. Creating geovisualizations is another great passion of mine. I have been developing my artificial intelligence skills for 4 years. I believe the future belongs to domain experts who can use AI effectively as a tool in their everyday work. Outside work I am into strength training, board games, Magic: The Gathering and gardening.',
+        tasks: ['Geoinformatics', 'Geovisualization', 'Anomaly detection', 'Machine learning', 'Artificial intelligence']
       }
     ]
   },
