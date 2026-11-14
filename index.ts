@@ -10,6 +10,8 @@ export * from './ui/popup/popup.model';
 export * from './ui/popup/popup.service';
 export * from './ui/splash/splash.component';
 export * from './ui/splash/splash.service';
+export * from './ui/switcher/switcher.component';
+export * from './ui/switcher/switcher.model';
 export * from './ui/about/about-modal.component';
 export * from './ui/about/about.service';
 export * from './ui/about/about.model';

@@ -1,0 +1,31 @@
+<div
+  class="switcher"
+  role="radiogroup"
+  [class.switcher--sm]="size() === 'sm'"
+  [class.switcher--md]="size() === 'md'"
+  [class.switcher--lg]="size() === 'lg'"
+  [class.switcher--ghost]="variant() === 'ghost'"
+  [class.switcher--full]="fullWidth()"
+  [attr.aria-label]="ariaLabel() || null">
+  @for (opt of options(); track opt.value) {
+    @let active = opt.value === value();
+    <button
+      type="button"
+      role="radio"
+      class="switcher__option"
+      [class.switcher__option--active]="active"
+      [class.switcher__option--icon-only]="iconOnly()"
+      [disabled]="opt.disabled ?? false"
+      [attr.aria-checked]="active"
+      [attr.aria-label]="iconOnly() ? opt.label : null"
+      [appTooltip]="opt.tooltip ?? (iconOnly() ? opt.label : null)"
+      (click)="select(opt)">
+      @if (opt.icon) {
+        <lucide-icon [img]="opt.icon" [size]="iconSize()"></lucide-icon>
+      }
+      @if (!iconOnly()) {
+        <span>{{ compact() && opt.shortLabel ? opt.shortLabel : opt.label }}</span>
+      }
+    </button>
+  }
+</div>
