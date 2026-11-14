@@ -78,6 +78,7 @@ Shared styles, UI primitives, and core utilities live in the [`kmd-labs/design-s
   - `SplashComponent` & `SplashService` (`app-splash`) — full-screen KMD loader with the official SVG logotype, progress bar, and reactive state management.
   - `AboutModalComponent` & `AboutService` (`app-about-modal`) — shared KMD Labs team and story modal dialog with direct contact and main website links.
   - `TimelineSliderComponent` (`app-timeline-slider`) — interactive range slider with preset markers.
+  - `DateRangeSliderComponent` (`app-date-range-slider`) — dual-handle date range slider with two grabbable circular thumbs, optional synchronized date inputs, and missing-input state support.
   - `SwitcherComponent` (`app-switcher`) — accessible segmented multi-option switcher (`role="radiogroup"`) with `size` (`sm` | `md` | `lg`), `variant`, `compact`, `iconOnly`, and option icons/tooltips.
   - `ToggleComponent` (`app-toggle`) — accessible switch toggle (`role="switch"`) with optional label, description, color swatch, and tooltip.
 - **Core Services & Utils (`@kmd/design-system/services/*`, `@kmd/design-system/utils/*`):**

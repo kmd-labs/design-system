@@ -1,0 +1,101 @@
+<div
+  class="date-range"
+  [class.date-range--disabled]="disabled()"
+  role="group"
+  [attr.aria-label]="ariaLabel()">
+  @if (showInputs()) {
+    <div class="date-range__inputs">
+      <label class="date-range__field" [class.date-range__field--missing]="missingStart()">
+        @if (startLabel()) {
+          <span class="date-range__label">{{ startLabel() }}</span>
+        }
+        <input
+          type="date"
+          [min]="minIso()"
+          [max]="maxIso()"
+          [disabled]="disabled()"
+          [value]="startDate()"
+          (change)="onStartInput($any($event.target).value)" />
+      </label>
+
+      <label class="date-range__field" [class.date-range__field--missing]="missingEnd()">
+        @if (endLabel()) {
+          <span class="date-range__label">{{ endLabel() }}</span>
+        }
+        <input
+          type="date"
+          [min]="minIso()"
+          [max]="maxIso()"
+          [disabled]="disabled()"
+          [value]="endDate()"
+          (change)="onEndInput($any($event.target).value)" />
+      </label>
+    </div>
+  } @else {
+    <div class="date-range__readout">
+      <span class="date-range__pill" [class.date-range__pill--missing]="missingStart()">
+        {{ startDate() || minIso() }}
+      </span>
+      <span class="date-range__sep">→</span>
+      <span class="date-range__pill" [class.date-range__pill--missing]="missingEnd()">
+        {{ endDate() || maxIso() }}
+      </span>
+    </div>
+  }
+
+  <div
+    #trackRef
+    class="date-range__track"
+    (pointerdown)="onTrackPointerDown($event)"
+    (pointermove)="onTrackPointerMove($event)"
+    (pointerup)="onTrackPointerUp($event)"
+    (pointercancel)="onTrackPointerUp($event)">
+    <div class="date-range__rail" aria-hidden="true"></div>
+    <div
+      class="date-range__selection"
+      [class.date-range__selection--partial]="!hasStart() || !hasEnd()"
+      [style.left.%]="startPct()"
+      [style.width.%]="rangeWidthPct()"
+      aria-hidden="true">
+    </div>
+
+    <button
+      type="button"
+      class="date-range__thumb"
+      [class.date-range__thumb--active]="activeThumb() === 'start'"
+      [class.date-range__thumb--unset]="!hasStart()"
+      [class.date-range__thumb--missing]="missingStart()"
+      [class.date-range__thumb--top]="startElevated()"
+      [style.left.%]="startPct()"
+      [disabled]="disabled()"
+      role="slider"
+      [attr.aria-label]="startLabel() || 'Start date'"
+      [attr.aria-valuemin]="minDay()"
+      [attr.aria-valuemax]="displayEndDay()"
+      [attr.aria-valuenow]="displayStartDay()"
+      [attr.aria-valuetext]="startDate() || minIso()"
+      [title]="startDate() || minIso()"
+      (pointerdown)="onThumbPointerDown('start', $event)"
+      (keydown)="onThumbKeyDown('start', $event)">
+    </button>
+
+    <button
+      type="button"
+      class="date-range__thumb"
+      [class.date-range__thumb--active]="activeThumb() === 'end'"
+      [class.date-range__thumb--unset]="!hasEnd()"
+      [class.date-range__thumb--missing]="missingEnd()"
+      [style.left.%]="endPct()"
+      [disabled]="disabled()"
+      role="slider"
+      [attr.aria-label]="endLabel() || 'End date'"
+      [attr.aria-valuemin]="displayStartDay()"
+      [attr.aria-valuemax]="maxDay()"
+      [attr.aria-valuenow]="displayEndDay()"
+      [attr.aria-valuetext]="endDate() || maxIso()"
+      [title]="endDate() || maxIso()"
+      (pointerdown)="onThumbPointerDown('end', $event)"
+      (keydown)="onThumbKeyDown('end', $event)">
+    </button>
+  </div>
+</div>
