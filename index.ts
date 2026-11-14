@@ -3,6 +3,8 @@ export * from './ui/brand/brand.component';
 export * from './ui/button/button.component';
 export * from './ui/carousel/carousel.component';
 export * from './ui/carousel/carousel.model';
+export * from './ui/date-range-slider/date-range-slider.component';
+export * from './ui/date-range-slider/date-range-slider.model';
 export * from './ui/dropdown/dropdown.component';
 export * from './ui/dropdown/dropdown.model';
 export * from './ui/popup/popup.component';
