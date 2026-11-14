@@ -16,6 +16,7 @@ export * from './ui/about/about.model';
 export * from './ui/about/about.data';
 export * from './ui/timeline-slider/timeline-slider.component';
 export * from './ui/timeline-slider/timeline-slider.model';
+export * from './ui/toggle/toggle.component';
 export * from './ui/tooltip/tooltip.component';
 export * from './ui/tooltip/tooltip.directive';
 export * from './ui/tooltip/tooltip.service';
