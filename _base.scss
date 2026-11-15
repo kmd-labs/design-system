@@ -68,6 +68,20 @@
   }
 }
 
+// Opt-in dark theme ("KMD Midnight"). Inert unless an app sets <html data-theme="dark">.
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  @each $key, $value in $theme-colors-dark {
+    --color-#{$key}: #{$value};
+  }
+  @each $key, $value in $semantic-colors-dark {
+    --color-#{$key}: #{$value};
+  }
+  @each $key, $value in $anomaly-colors-dark {
+    --color-#{$key}: #{$value};
+  }
+}
+
 *,
 *::before,
 *::after {

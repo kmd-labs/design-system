@@ -10,7 +10,7 @@
       <div class="splash__mark" aria-hidden="true">
         <img
           class="splash__logo"
-          src="assets/design-system/logo/kmd-black-orange.svg"
+          [src]="theme.logoSrc()"
           alt=""
           (animationend)="onRevealAnimationEnd($event)">
       </div>

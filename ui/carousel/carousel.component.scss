@@ -150,10 +150,10 @@
     }
 
     &.is-active {
-      background: rgba(255, 255, 255, 0.95);
-      border-color: rgba(211, 116, 0, 0.4);
+      background: color("panel-bg-heavy");
+      border-color: color("accent-glow");
       color: color("text-main");
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+      box-shadow: 0 2px 8px color("shadow-panel");
       opacity: 1;
     }
 

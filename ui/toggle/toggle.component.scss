@@ -100,7 +100,7 @@
     width: 14px;
     height: 14px;
     border-radius: radius("pill");
-    background: color("panel-bg-solid");
+    background: color("slider-thumb-bg");
     border: 1px solid color("line");
     box-shadow: 0 1px 3px color("shadow-heavy");
     transition: transform transition("fast"), border-color transition("fast");

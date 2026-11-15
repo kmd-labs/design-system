@@ -10,6 +10,7 @@ import {
 import { CommonModule } from '@angular/common';
 import { SplashService } from './splash.service';
 import { provisionFavicon } from '../../services/seo.service';
+import { ThemeService } from '../../services/theme.service';
 
 /**
  * Full-screen KMD splash loader with the official SVG logotype and progress bar.
@@ -25,6 +26,7 @@ import { provisionFavicon } from '../../services/seo.service';
 })
 export class SplashComponent implements AfterViewInit, OnDestroy {
   readonly splashService = inject(SplashService, { optional: true });
+  readonly theme = inject(ThemeService);
 
   constructor() {
     provisionFavicon();

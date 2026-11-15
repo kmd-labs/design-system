@@ -66,7 +66,7 @@
     }
 
     &--active {
-      background: color("panel-bg-solid");
+      background: color("switcher-active-bg");
       color: color("text-bright");
       font-weight: font-weight("semibold");
       box-shadow: 0 1px 3px color("shadow-panel");

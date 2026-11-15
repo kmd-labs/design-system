@@ -4,6 +4,7 @@ import { LucideAngularModule, ExternalLink, Github, Linkedin, Mail, Globe } from
 import { AboutText, TeamMember } from './about.model';
 import { ABOUT_DICTS, TEAM_MEMBERS } from './about.data';
 import { AboutService } from './about.service';
+import { ThemeService } from '../../services/theme.service';
 
 /**
  * Resolves the active site language for contact actions.
@@ -90,6 +91,7 @@ export function getContactMailtoUrl(explicitLang?: string): string {
 })
 export class AboutModalComponent {
   private readonly aboutService = inject(AboutService, { optional: true });
+  readonly theme = inject(ThemeService);
 
   @Input() lang?: 'en' | 'pl' | 'es';
   @Input() data?: AboutText;
