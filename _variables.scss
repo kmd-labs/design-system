@@ -144,10 +144,13 @@ $semantic-colors: (
   // Status Tokens
   "danger": palette("danger-500"),
   "danger-soft": rgba(palette("danger-500"), 0.16),
+  "danger-text": palette("danger-700"),
   "warning": palette("warning-500"),
   "warning-soft": rgba(palette("warning-500"), 0.16),
+  "warning-text": palette("warning-700"),
   "success": palette("success-500"),
   "success-soft": rgba(palette("success-500"), 0.16),
+  "success-text": palette("success-700"),
   "info": palette("info-400"),
   "info-soft": rgba(palette("info-400"), 0.16),
   // Brand & Accents
@@ -155,6 +158,8 @@ $semantic-colors: (
   "accent-hover": palette("warning-400"),
   "accent-glow": rgba(palette("warning-500"), 0.32),
   "accent-glow-soft": rgba(palette("warning-500"), 0.08),
+  "on-accent": palette("neutral-0"),
+  "on-info": palette("neutral-0"),
   "cool": palette("info-400"),
   "loading-warn": palette("warning-500"),
   "error": palette("danger-500"),
@@ -173,13 +178,18 @@ $semantic-colors: (
   "rain-wet": palette("info-500")
 );
 
-// ─── 4. Surface & UI Theme Tokens (Single Light Theme) ─────────────────────────
+// ─── 4. Surface & UI Theme Tokens (Canonical Light Default) ────────────────────
 
 $theme-colors: (
   "bg-deep": palette("neutral-50"),
   "panel-bg": rgba(palette("neutral-0"), 0.84),
   "panel-bg-solid": palette("neutral-0"),
   "panel-bg-heavy": rgba(palette("neutral-0"), 0.96),
+  "panel-inset": rgba(palette("neutral-0"), 0.65),
+  "panel-inset-strong": rgba(palette("neutral-0"), 0.85),
+  "surface-muted": palette("neutral-100"),
+  "surface-muted-strong": palette("neutral-200"),
+  "switcher-active-bg": palette("neutral-0"),
   "popup-backdrop": rgba(palette("neutral-900"), 0.35),
   "tooltip-bg": rgba(palette("neutral-0"), 0.96),
   "badge-bg": palette("neutral-500"),
@@ -202,9 +212,15 @@ $theme-colors: (
   "btn-play-active": rgba(palette("warning-500"), 0.16),
   "btn-play-border": rgba(palette("warning-500"), 0.65),
   "slider-thumb-bg": palette("neutral-0"),
-  // 3D Globe & Canvas specific tokens
+  // 2D Map & 3D Globe / Canvas specific tokens
+  "map-bg": #e5ecf2,
+  "map-border-country": rgba(palette("neutral-50"), 0.78),
+  "map-border-state": rgba(palette("neutral-200"), 0.45),
+  "map-tile-filter": none,
   "globe-bg": palette("neutral-50"),
+  "globe-ocean": #aad3df,
   "globe-glow": palette("neutral-900"),
+  "globe-bokeh": palette("neutral-400"),
   "globe-star": palette("neutral-600"),
   "globe-land-fill": palette("neutral-300"),
   "globe-land-stroke": rgba(palette("neutral-600"), 0.55),
@@ -224,6 +240,106 @@ $colors: map.merge(
   map.merge($theme-colors, map.merge($semantic-colors, $palette)),
   map.merge($thermal-colors, $anomaly-colors)
 );
+
+// ─── 5. Optional Dark Theme ("KMD Midnight") — opt-in via :root[data-theme="dark"] ───
+// Overrides ONLY keys that already exist in $theme-colors / $semantic-colors / $anomaly-colors.
+
+$palette-midnight: (
+  "midnight-950": #070f1c,
+  "midnight-900": #0b1526,
+  "midnight-850": #0f1c31,
+  "midnight-800": #111e33,
+  "midnight-700": #1a2a45,
+  "midnight-600": #24375a,
+  "midnight-500": #3a4d6b,
+  "midnight-400": #6b7fa3,
+  "midnight-300": #8a9bb8,
+  "midnight-200": #b8c5da,
+  "midnight-100": #dbe4f3,
+  "midnight-50": #f5f8ff,
+);
+
+@function midnight($key) {
+  @return map.get($palette-midnight, "midnight-#{$key}");
+}
+
+$theme-colors-dark: (
+  "bg-deep": midnight(900),
+  "panel-bg": rgba(midnight(800), 0.82),
+  "panel-bg-solid": midnight(800),
+  "panel-bg-heavy": rgba(midnight(800), 0.95),
+  "panel-inset": rgba(#94b2e6, 0.05),
+  "panel-inset-strong": rgba(#94b2e6, 0.09),
+  "surface-muted": midnight(700),
+  "surface-muted-strong": midnight(600),
+  "switcher-active-bg": midnight(700),
+  "popup-backdrop": rgba(midnight(950), 0.6),
+  "tooltip-bg": rgba(midnight(850), 0.96),
+  "badge-bg": midnight(500),
+  "line": rgba(#94b2e6, 0.14),
+  "line-strong": rgba(#94b2e6, 0.26),
+  "shadow-panel": rgba(#000000, 0.35),
+  "shadow-heavy": rgba(#000000, 0.5),
+  "text-main": midnight(100),
+  "text-dim": midnight(300),
+  "text-bright": midnight(50),
+  "text-desc": midnight(200),
+  "text-note": #9fb0ca,
+  "link-color": palette("info-400"),
+  "btn-bg": rgba(#94b2e6, 0.06),
+  "btn-hover": rgba(#94b2e6, 0.12),
+  "btn-active-blue": rgba(palette("info-400"), 0.18),
+  "btn-active-blue-border": rgba(palette("info-400"), 0.6),
+  "btn-active-red": rgba(palette("warning-500"), 0.2),
+  "btn-active-red-border": rgba(palette("warning-500"), 0.7),
+  "btn-play-active": rgba(palette("warning-500"), 0.22),
+  "btn-play-border": rgba(palette("warning-500"), 0.75),
+  "slider-thumb-bg": midnight(100),
+  "map-bg": midnight(850),
+  "map-border-country": rgba(midnight(100), 0.55),
+  "map-border-state": rgba(midnight(300), 0.35),
+  "map-tile-filter": brightness(0.72) saturate(0.85),
+  "globe-bg": midnight(900),
+  "globe-ocean": midnight(850),
+  "globe-glow": #4f8cff,
+  "globe-bokeh": midnight(400),
+  "globe-star": midnight(400),
+  "globe-land-fill": midnight(700),
+  "globe-land-stroke": rgba(#94b2e6, 0.4),
+  "globe-graticule": rgba(#94b2e6, 0.08),
+  "globe-equator": rgba(#94b2e6, 0.25),
+  "globe-nino-box": rgba(midnight(100), 0.6),
+  "globe-wind": midnight(200),
+  "globe-wave-warm": palette("info-400"),
+  "globe-wave-cold": palette("primary-400"),
+  "walker-sky-top": #13254a,
+  "walker-sky-bottom": midnight(900),
+  "walker-land": midnight(700),
+);
+
+$semantic-colors-dark: (
+  // Signature brand orange stays warning-500 (#d37400) on Midnight navy
+  "accent-glow": rgba(palette("warning-500"), 0.4),
+  "accent-glow-soft": rgba(palette("warning-500"), 0.12),
+  "on-info": midnight(950),
+  "danger-text": palette("danger-300"),
+  "success-text": palette("success-300"),
+  "warning-text": palette("warning-300"),
+  "phase-neu": palette("neutral-400"),
+);
+
+$anomaly-colors-dark: (
+  "anom-0": midnight(700),
+);
+
+// Build-time guard: dark maps may only override existing keys
+@each $map in ($theme-colors-dark, $semantic-colors-dark, $anomaly-colors-dark) {
+  @each $key, $_ in $map {
+    @if not map.has-key($colors, $key) {
+      @error "Dark theme token `#{$key}` has no light counterpart in $colors.";
+    }
+  }
+}
 
 $breakpoints: (
   "mobile": 640px,

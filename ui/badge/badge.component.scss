@@ -7,8 +7,8 @@
   font-weight: font-weight("bold");
   padding: 2px 8px;
   border-radius: radius("pill");
-  color: #ffffff;
+  color: color("on-accent");
   transition: background-color transition("base");
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.22);
+  box-shadow: 0 1px 4px color("shadow-heavy");
   white-space: nowrap;
 }

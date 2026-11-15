@@ -15,6 +15,7 @@ import { AboutService } from '../about/about.service';
 import { ABOUT_DICTS } from '../about/about.data';
 import { PopupService } from '../popup/popup.service';
 import { provisionFavicon } from '../../services/seo.service';
+import { ThemeService } from '../../services/theme.service';
 
 /**
  * Standardized KMD Labs Brand Logotype & Interactive Collaboration Pill.
@@ -34,6 +35,7 @@ export class BrandComponent {
   private readonly bp = inject(BreakpointService);
   private readonly about = inject(AboutService, { optional: true });
   private readonly popup = inject(PopupService, { optional: true });
+  private readonly theme = inject(ThemeService);
 
   constructor() {
     provisionFavicon();
@@ -42,7 +44,8 @@ export class BrandComponent {
   @Input() appName?: string;
   @Input() cta?: string;
   @Input() lang?: 'en' | 'pl' | 'es';
-  @Input() logoSrc = 'assets/design-system/logo/kmd-black-orange.svg';
+  @Input() logoSrc?: string;
+  @Input() logoSrcDark?: string;
   @Input() logoAlt = 'KMD';
   @Input() expanded?: boolean;
   @Input() popupOpen?: boolean;
@@ -50,6 +53,11 @@ export class BrandComponent {
   @Output() readonly btnClick = new EventEmitter<MouseEvent>();
 
   readonly ctaIcon = Handshake;
+  readonly resolvedLogoSrc = computed<string>(() =>
+    this.theme.isDark()
+      ? (this.logoSrcDark ?? this.theme.logoSrc())
+      : (this.logoSrc ?? this.theme.logoSrc())
+  );
 
   private readonly hovered = signal(false);
   private readonly mobileExpanded = signal(false);

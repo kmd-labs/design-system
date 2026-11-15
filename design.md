@@ -14,10 +14,10 @@ All KMD visualization applications are built upon four fundamental design pillar
 2. **No Settings Bloat:**
    - Never introduce settings modals, preferences sidebars, theme toggles, or multistep onboarding walkthroughs that block the user from interacting with the data.
    - Key mode switches and controls are readily accessible directly on the primary viewport.
-3. **Single Light Theme:**
-   - KMD applications use a single, cohesive **Light Theme** engineered around an airy `neutral-50` (`#f5f7fb`) background with frosted glass surfaces (`rgba(255, 255, 255, 0.84)`).
-   - We do **not** support or implement a dark mode, light/dark toggles, or theme persistence.
-   - High contrast, subtle borders, and precise alpha blending ensure optimal readability under all ambient lighting conditions.
+3. **Light Theme Default & Optional Midnight Dark Theme:**
+   - KMD applications default to a cohesive **Light Theme** engineered around an airy `neutral-50` (`#f5f7fb`) background with frosted glass surfaces (`rgba(255, 255, 255, 0.84)`).
+   - An opt-in blue **Midnight** dark theme (`:root[data-theme="dark"]`, `#0b1526` navy background, `#D37400` brand orange) may be activated by an app via `ThemeService.setMode('dark')`, exposed **only** inside an existing Settings popup (never as a header toggle button).
+   - High contrast, subtle borders, and precise alpha blending ensure optimal readability under both themes.
 4. **Unified Typography:**
    - A single primary font family—**Inter** (`$font-family: "Inter", sans-serif;`)—is used across all UI elements, HUD controls, dialogs, and `<canvas>` 2D/3D labels.
    - Monospaced numeric readouts (dates, anomaly numbers, lat/long degrees) use **JetBrains Mono** / system monospace (`$font-family-mono`).
@@ -319,6 +319,11 @@ When rendering text directly onto complex visual fields (e.g., animated particle
 2. **Apply Canvas Clamping:** Ensure badges clamp against `(0, 0, width, height)` to prevent text clipping at viewport borders.
 3. **Collision Avoidance:** If dynamic timeline indicators or cursor crosshairs pass over static label badges, reposition or offset the badge with an arrow or leader line to prevent overlapping pills.
 
+### 5.3 Dark Theme Rules for Canvas & WebGL Renderers
+Apps that opt into dark mode via `ThemeService.setMode()` must:
+1. Never hardcode surface, border, or sky/ocean hex values in 2D Canvas or Three.js materials.
+2. Read colors via `ThemeService.getTokenColor(...)` inside an Angular `effect()` tracking `ThemeService.mode()`, updating materials/uniforms and requesting a repaint whenever the theme changes.
+
 ---
 
 ## 6. Angular UI Component Library (`@kmd/design-system`)
@@ -477,8 +482,8 @@ Smooth, infinite looped carousel with touch/mouse swipe, edge fade mask, and res
 
 All official KMD logotypes and icons are located in `src/design-system/assets`:
 
-- `assets/logo/kmd-black-orange.svg`: **Canonical logotype** (black wordmark with `#D37400` orange accent dot). Used on all light theme headers.
-- `assets/logo/kmd-white-orange.svg`: Inverse logotype for dark marketing or terminal contexts.
+- `assets/logo/kmd-black-orange.svg`: **Canonical light-theme logotype** (black wordmark with `#D37400` orange accent dot). Used on light theme headers, splash, and about modal.
+- `assets/logo/kmd-white-orange.svg`: **Dark-theme logotype** (white wordmark with `#D37400` orange accent dot), selected automatically by `ThemeService.logoSrc()` when dark mode is active.
 - `assets/favicon.svg` & `assets/favicon.ico`: Orange accent circle icon mark for browser tabs.
 
 ---
@@ -488,7 +493,7 @@ All official KMD logotypes and icons are located in `src/design-system/assets`:
 When scaffolding or modifying any KMD application, verify compliance against this checklist:
 
 - [ ] Visualization occupies `100vw × 100vh` without scrollbars (`overflow: hidden` on `html, body`).
-- [ ] No dark mode switch or theme toggle exists; theme is exclusively the canonical Light Theme (`#f5f7fb`).
+- [ ] Defaults to the canonical Light Theme (`#f5f7fb`); if Midnight dark mode is enabled, its selector lives only in the Settings popup and canvas renderers re-read tokens on `ThemeService.mode()` changes.
 - [ ] Top-Left header contains brand pill (`kmd-black-orange.svg` + app name) and compact language selector.
 - [ ] Top-Right header contains single mode/view switcher dropdown.
 - [ ] Bottom dock hosts timeline sliders, controls, and glossary trigger using `$control-height: 32px` buttons.

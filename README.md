@@ -1,6 +1,6 @@
 # design-system (`@kmd-labs/design-system`)
 
-Unified light-mode design system, Angular UI primitives, and zero-friction app scaffolder CLI for **KMD (`kmd-labs`)** interactive visualizations.
+Unified design system (canonical Light Theme default with opt-in Midnight dark theme), Angular UI primitives, and zero-friction app scaffolder CLI for **KMD (`kmd-labs`)** interactive visualizations.
 
 ---
 

@@ -146,7 +146,7 @@
       margin-top: 4px;
       background: color("accent");
       border-color: color("accent");
-      color: #ffffff;
+      color: color("on-accent");
       font-weight: font-weight("semibold");
       justify-content: center;
       text-align: center;
@@ -159,7 +159,7 @@
       &:hover {
         background: color("accent-hover");
         border-color: color("accent-hover");
-        color: #ffffff;
+        color: color("on-accent");
         box-shadow: 0 4px 14px color("accent-glow");
       }
     }

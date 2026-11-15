@@ -36,7 +36,7 @@
 
   &--popup-open {
     z-index: 120;
-    box-shadow: 0 4px 16px rgba(15, 23, 42, 0.12);
+    box-shadow: 0 4px 16px color("shadow-panel");
   }
 }
 
@@ -155,7 +155,7 @@
     &--expanded,
     &--popup-open {
       max-width: 280px;
-      box-shadow: 0 8px 24px rgba(15, 23, 42, 0.22);
+      box-shadow: 0 8px 24px color("shadow-heavy");
     }
   }
 
@@ -223,7 +223,7 @@
     width: auto;
     max-width: none;
     overflow: visible;
-    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.08);
+    box-shadow: 0 2px 8px color("shadow-panel");
   }
 
   .header__brand-btn {

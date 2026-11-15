@@ -4,7 +4,7 @@
   <div class="about__page">
     <div class="about__content">
       <section class="hero glass-panel glass-panel--heavy">
-        <img class="hero__logo" src="assets/design-system/logo/kmd-black-orange.svg" alt="KMD" />
+        <img class="hero__logo" [src]="theme.logoSrc()" alt="KMD" />
         <p class="hero__kicker">{{ a.kicker }}</p>
 
         @for (lead of a.leads; track $index) {
