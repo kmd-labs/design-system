@@ -1,0 +1,47 @@
+name: Test CLI Scaffolder
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+jobs:
+  scaffold-and-build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - name: barebones
+            flags: '--yes --no-github'
+            docker: false
+          - name: globe-and-docker
+            flags: '--globe --docker --yes --no-github'
+            docker: true
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Scaffold ${{ matrix.name }} app
+        run: |
+          mkdir -p /tmp/scaffold-test
+          cd /tmp/scaffold-test
+          node "${{ github.workspace }}/cli/index.mjs" "test-${{ matrix.name }}" ${{ matrix.flags }}
+
+      - name: Install dependencies & build Angular app
+        working-directory: /tmp/scaffold-test/test-${{ matrix.name }}
+        env:
+          NG_CLI_ANALYTICS: 'false'
+        run: |
+          npm install --legacy-peer-deps
+          npm run build
+
+      - name: Test Docker production image build
+        if: matrix.docker
+        working-directory: /tmp/scaffold-test/test-${{ matrix.name }}
+        run: |
+          docker build -t "test-${{ matrix.name }}:ci" .
