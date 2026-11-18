@@ -559,3 +559,23 @@ $opacities: (
     border-radius: radius("pill");
   }
 }
+
+// Opt-in header control wrapper matching BrandComponent's responsive pill heights
+@mixin header-pill {
+  display: inline-flex;
+  align-items: center;
+  height: var(--kmd-brand-h, 42px);
+  box-sizing: border-box;
+  padding: 4px;
+  border-radius: radius("pill");
+
+  @include respond-to("mobile") {
+    height: var(--kmd-brand-h, 38px);
+    padding: 2px;
+  }
+
+  @include respond-to("mobile-landscape") {
+    height: var(--kmd-brand-h, 34px);
+    padding: 2px;
+  }
+}
