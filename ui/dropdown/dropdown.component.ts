@@ -11,7 +11,7 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { LucideAngularModule, Check, ChevronDown } from 'lucide-angular';
-import { ButtonComponent, ButtonVariant } from '../button/button.component';
+import { ButtonComponent, ButtonSize, ButtonVariant } from '../button/button.component';
 import { DropdownOption, BlurToken } from './dropdown.model';
 
 @Component({
@@ -32,6 +32,7 @@ export class DropdownComponent<T = string> {
   readonly activeIcon = input<any>(null);
   readonly iconSize = input<number>(15);
   readonly variant = input<ButtonVariant>('ghost');
+  readonly size = input<ButtonSize>('md');
   readonly ariaLabel = input<string>('');
   readonly align = input<'left' | 'right'>('left');
   readonly direction = input<'down' | 'up'>('down');
