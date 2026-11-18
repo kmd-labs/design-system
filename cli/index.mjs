@@ -24,6 +24,8 @@ const toTitle = slug =>
     .map(w => w.charAt(0).toUpperCase() + w.slice(1))
     .join(' ');
 
+const withDocker = process.argv.includes('--docker');
+const withGlobe = process.argv.includes('--globe');
 const args = process.argv.slice(2).filter(a => !a.startsWith('-'));
 const cliArg = args[0] === 'new' || args[0] === 'create' ? args[1] : args[0];
 const isPlaceholder = !cliArg || toSlug(cliArg) === 'my-visualization-app';
@@ -61,7 +63,7 @@ if (process.stdin.isTTY && !process.argv.includes('--yes') && !process.argv.incl
     rl.close();
   }
 } else if (!appSlug) {
-  console.error('\nUsage: npx github:kmd-labs/design-system [app-name]\n');
+  console.error('\nUsage: npx github:kmd-labs/design-system [app-name] [--docker] [--globe] [--yes] [--no-github]\n');
   process.exit(1);
 }
 
@@ -116,6 +118,7 @@ write(
         '@angular/router': '~21.2.0',
         'lucide-angular': '^1.0.0',
         rxjs: '~7.8.0',
+        ...(withGlobe ? { three: '^0.187.0' } : {}),
         tslib: '^2.3.0',
         'zone.js': '~0.15.0'
       },
@@ -123,6 +126,7 @@ write(
         '@angular-devkit/build-angular': '~21.2.0',
         '@angular/cli': '~21.2.0',
         '@angular/compiler-cli': '~21.2.0',
+        ...(withGlobe ? { '@types/three': '^0.187.0' } : {}),
         typescript: '~5.9.0'
       }
     },
@@ -645,7 +649,7 @@ import {
 } from '@kmd/design-system';
 import { I18nService } from './core/i18n/i18n.service';
 import { Lang } from './core/i18n/i18n.types';
-
+${withGlobe ? "import { GlobeComponent } from './components/globe/globe.component';\n" : ''}
 @Component({
   selector: 'app-root',
   standalone: true,
@@ -658,7 +662,7 @@ import { Lang } from './core/i18n/i18n.types';
     PopupComponent,
     SplashComponent,
     TimelineSliderComponent,
-    TooltipComponent
+    TooltipComponent${withGlobe ? ',\n    GlobeComponent' : ''}
   ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
@@ -766,7 +770,9 @@ write(
   </header>
 
   <!-- Fullscreen Visualization Stage -->
-  <section class="stage" [attr.aria-label]="t.stageAriaLabel"></section>
+  <section class="stage" [attr.aria-label]="t.stageAriaLabel">${
+    withGlobe ? '\n    <app-globe></app-globe>\n  ' : ''
+  }</section>
 
   <!-- Bottom Dock: Sliders & Glossaries -->
   <footer class="dock-wrap">
@@ -1215,6 +1221,305 @@ try {
 }
 `
 );
+
+// 8b. Optional --globe: Three.js 3D Globe component with 1:1 distance-scaled OrbitControls & theme reactivity
+if (withGlobe) {
+  write(
+    'src/app/components/globe/globe.component.html',
+    `<canvas #canvasRef id="c"></canvas>\n`
+  );
+
+  write(
+    'src/app/components/globe/globe.component.scss',
+    `:host {
+  display: block;
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+#c {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  touch-action: none;
+}
+`
+  );
+
+  write(
+    'src/app/components/globe/globe.component.ts',
+    `import {
+  AfterViewInit,
+  Component,
+  ElementRef,
+  NgZone,
+  OnDestroy,
+  ViewChild,
+  effect,
+  inject
+} from '@angular/core';
+import * as THREE from 'three';
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+import { ThemeService } from '@kmd/design-system/services/theme.service';
+
+@Component({
+  selector: 'app-globe',
+  standalone: true,
+  templateUrl: './globe.component.html',
+  styleUrl: './globe.component.scss'
+})
+export class GlobeComponent implements AfterViewInit, OnDestroy {
+  @ViewChild('canvasRef', { static: true }) canvasRef!: ElementRef<HTMLCanvasElement>;
+
+  private readonly ngZone = inject(NgZone);
+  private readonly theme = inject(ThemeService);
+
+  private readonly R = 10;
+  private renderer!: THREE.WebGLRenderer;
+  private scene!: THREE.Scene;
+  private camera!: THREE.PerspectiveCamera;
+  private controls!: OrbitControls;
+  private glowMat?: THREE.ShaderMaterial;
+  private animId = 0;
+
+  private readonly onResize = () => this.handleResize();
+
+  constructor() {
+    effect(() => {
+      this.theme.mode();
+      if (this.scene) {
+        this.scene.background = new THREE.Color(this.theme.getTokenColor('globe-bg', '#f5f7fb'));
+      }
+      if (this.glowMat) {
+        const dark = this.theme.isDark();
+        this.glowMat.uniforms['c'].value.set(
+          dark ? '#9a3412' : this.theme.getTokenColor('globe-glow', '#0f172a')
+        );
+        this.glowMat.uniforms['uOpacity'].value = dark ? 0.34 : 0.32;
+      }
+    });
+  }
+
+  ngAfterViewInit(): void {
+    this.ngZone.runOutsideAngular(() => {
+      this.initScene();
+      window.addEventListener('resize', this.onResize);
+      this.animate();
+    });
+  }
+
+  ngOnDestroy(): void {
+    cancelAnimationFrame(this.animId);
+    window.removeEventListener('resize', this.onResize);
+    this.controls?.dispose();
+    this.renderer?.dispose();
+  }
+
+  private initScene(): void {
+    const canvas = this.canvasRef.nativeElement;
+    const w = canvas.clientWidth || window.innerWidth;
+    const h = canvas.clientHeight || window.innerHeight;
+
+    this.renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: 'high-performance' });
+    this.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+    this.renderer.setSize(w, h, false);
+
+    this.scene = new THREE.Scene();
+    this.scene.background = new THREE.Color(this.theme.getTokenColor('globe-bg', '#f5f7fb'));
+
+    this.camera = new THREE.PerspectiveCamera(40, w / (h || 1), 0.1, 800);
+    this.camera.position.set(0, 12, 31);
+
+    this.controls = new OrbitControls(this.camera, canvas);
+    this.controls.enableDamping = true;
+    this.controls.dampingFactor = 0.14;
+    this.controls.minDistance = 12;
+    this.controls.maxDistance = 60;
+    this.controls.enablePan = false;
+    this.controls.target.set(0, 0, 0);
+    this.updateOrbitRotateSpeed();
+    this.controls.update();
+
+    this.scene.add(new THREE.HemisphereLight(0xffffff, 0xdbe4f0, 1.3));
+    const dirLight = new THREE.DirectionalLight(0xffffff, 0.8);
+    dirLight.position.set(5, 10, 8);
+    this.scene.add(dirLight);
+
+    const sphereMat = new THREE.MeshStandardMaterial({
+      color: '#1e3a5f',
+      roughness: 0.7,
+      metalness: 0.05
+    });
+    this.scene.add(new THREE.Mesh(new THREE.SphereGeometry(this.R, 64, 32), sphereMat));
+
+    const dark = this.theme.isDark();
+    this.glowMat = new THREE.ShaderMaterial({
+      uniforms: {
+        c: { value: new THREE.Color(dark ? '#9a3412' : this.theme.getTokenColor('globe-glow', '#0f172a')) },
+        uOpacity: { value: dark ? 0.34 : 0.32 },
+        uPower: { value: 2.0 }
+      },
+      vertexShader: \`
+        varying vec3 vN;
+        varying vec3 vV;
+        void main() {
+          vec4 mv = modelViewMatrix * vec4(position, 1.0);
+          vN = normalize(normalMatrix * normal);
+          vV = normalize(-mv.xyz);
+          gl_Position = projectionMatrix * mv;
+        }
+      \`,
+      fragmentShader: \`
+        uniform vec3 c;
+        uniform float uOpacity;
+        uniform float uPower;
+        varying vec3 vN;
+        varying vec3 vV;
+        void main() {
+          float d = clamp(-dot(vN, vV), 0.0, 1.0);
+          float t = clamp(d / 0.4938, 0.0, 1.0);
+          float a = pow(t, uPower) * uOpacity;
+          gl_FragColor = vec4(c, a);
+        }
+      \`,
+      side: THREE.BackSide,
+      transparent: true,
+      depthWrite: false
+    });
+    this.scene.add(new THREE.Mesh(new THREE.SphereGeometry(this.R * 1.15, 64, 32), this.glowMat));
+  }
+
+  /** Scales OrbitControls rotateSpeed with camera distance so dragging tracks 1:1 with the globe surface. */
+  private updateOrbitRotateSpeed(): void {
+    if (!this.controls || !this.camera) return;
+    const dist = this.camera.position.length();
+    const halfFovRad = THREE.MathUtils.degToRad(this.camera.fov * 0.5);
+    const speed = ((dist - this.R) * Math.tan(halfFovRad)) / (Math.PI * this.R);
+    this.controls.rotateSpeed = Math.max(0.02, speed);
+  }
+
+  private animate = (): void => {
+    this.animId = requestAnimationFrame(this.animate);
+    this.updateOrbitRotateSpeed();
+    this.controls.update();
+    this.renderer.render(this.scene, this.camera);
+  };
+
+  private handleResize(): void {
+    if (!this.canvasRef || !this.renderer || !this.camera) return;
+    const canvas = this.canvasRef.nativeElement;
+    const w = canvas.clientWidth;
+    const h = canvas.clientHeight;
+    if (!w || !h) return;
+    this.camera.aspect = w / h;
+    this.camera.updateProjectionMatrix();
+    this.renderer.setSize(w, h, false);
+  }
+}
+`
+  );
+}
+
+// 8c. Optional --docker: Production Dockerfile (Nginx SPA) + Dev Container
+if (withDocker) {
+  write(
+    '.dockerignore',
+    `node_modules
+dist
+.git
+.angular
+`
+  );
+
+  write(
+    'nginx.conf',
+    `server {
+  listen 80;
+  server_name _;
+  root /usr/share/nginx/html;
+  index index.html;
+
+  gzip on;
+  gzip_types text/plain text/css application/javascript application/json image/svg+xml;
+
+  location / {
+    try_files $uri $uri/ /index.html;
+  }
+
+  location ~* \\.(js|css|svg|png|jpg|woff2|bin|gz)$ {
+    expires 7d;
+    add_header Cache-Control "public, immutable";
+  }
+}
+`
+  );
+
+  write(
+    'Dockerfile',
+    `# syntax=docker/dockerfile:1
+FROM node:22-bookworm-slim AS build
+WORKDIR /app
+
+COPY package*.json .npmrc ./
+RUN npm ci --legacy-peer-deps
+
+COPY . .
+RUN npm run build
+
+FROM nginx:1.27-alpine AS runtime
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+COPY --from=build /app/dist/${appSlug}/browser /usr/share/nginx/html
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]
+`
+  );
+
+  write(
+    '.devcontainer/Dockerfile',
+    `# syntax=docker/dockerfile:1
+FROM node:22-bookworm
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get update && apt-get install -y --no-install-recommends \\
+    git curl ca-certificates build-essential jq procps sudo chromium \\
+    && rm -rf /var/lib/apt/lists/*
+
+ENV CHROME_BIN=/usr/bin/chromium
+
+RUN echo "node ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers.d/node \\
+    && chmod 0440 /etc/sudoers.d/node
+
+RUN npm install -g @angular/cli
+
+USER node
+WORKDIR /workspace
+EXPOSE 4200 9876
+CMD ["/bin/bash"]
+`
+  );
+
+  write(
+    '.devcontainer/devcontainer.json',
+    JSON.stringify(
+      {
+        name: `${appTitle} (Dev Container)`,
+        build: { dockerfile: 'Dockerfile', context: '..' },
+        workspaceFolder: '/workspace',
+        forwardPorts: [4200, 9876],
+        remoteUser: 'node',
+        postCreateCommand:
+          'git submodule update --init --recursive 2>/dev/null || true; [ -f package.json ] && npm install --legacy-peer-deps || true'
+      },
+      null,
+      2
+    ) + '\n'
+  );
+}
 
 // 9. Initialize git repository, link kmd-labs/design-system submodule, and apply GitHub branch protection
 const skipGithub = process.argv.includes('--no-github');
