@@ -32,7 +32,7 @@ export class ThemeService {
       }
       document
         .querySelector('meta[name="theme-color"]')
-        ?.setAttribute('content', this.getTokenColor('bg-deep', mode === 'dark' ? '#0b1526' : '#f5f7fb'));
+        ?.setAttribute('content', this.getTokenColor('bg-deep', mode === 'dark' ? '#0d0d0d' : '#f5f7fb'));
     }
     this._mode.set(mode);
   }
