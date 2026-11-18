@@ -24,8 +24,8 @@ const toTitle = slug =>
     .map(w => w.charAt(0).toUpperCase() + w.slice(1))
     .join(' ');
 
-const withDocker = process.argv.includes('--docker');
-const withGlobe = process.argv.includes('--globe');
+let withDocker = process.argv.includes('--docker');
+let withGlobe = process.argv.includes('--globe');
 const args = process.argv.slice(2).filter(a => !a.startsWith('-'));
 const cliArg = args[0] === 'new' || args[0] === 'create' ? args[1] : args[0];
 const isPlaceholder = !cliArg || toSlug(cliArg) === 'my-visualization-app';
@@ -59,6 +59,16 @@ if (process.stdin.isTTY && !process.argv.includes('--yes') && !process.argv.incl
     const defaultTitle = toTitle(appSlug);
     const titleAnswer = (await rl.question(`? Application display title (${defaultTitle}): `)).trim();
     appTitle = titleAnswer || defaultTitle;
+
+    if (!withGlobe) {
+      const globeAnswer = (await rl.question(`? Include 3D Three.js globe component? (y/N): `)).trim();
+      withGlobe = /^y(es)?$/i.test(globeAnswer);
+    }
+
+    if (!withDocker) {
+      const dockerAnswer = (await rl.question(`? Include Docker & Dev Container setup? (y/N): `)).trim();
+      withDocker = /^y(es)?$/i.test(dockerAnswer);
+    }
   } finally {
     rl.close();
   }

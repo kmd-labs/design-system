@@ -12,11 +12,20 @@ Run directly from GitHub with `npx` (it will interactively prompt you for the pr
 npx github:kmd-labs/design-system
 ```
 
-Or pass your project name directly:
+Or pass your project name and optional flags directly:
 
 ```bash
-npx github:kmd-labs/design-system <your-app-name>
+npx github:kmd-labs/design-system <your-app-name> [--globe] [--docker] [--yes] [--no-github]
 ```
+
+Running the bare command (or passing `--yes` without feature flags) scaffolds a **barebones** visualization app by default. In interactive mode, the CLI also asks whether to include the optional extras below:
+
+| Flag | Default | Description |
+| :--- | :--- | :--- |
+| `--globe` | `false` | Adds `three` / `@types/three` and scaffolds a fullscreen `GlobeComponent` (`OrbitControls` with 1:1 cursor tracking and live theme reactivity) inside `.stage`. |
+| `--docker` | `false` | Adds a multi-stage production `Dockerfile` (Nginx SPA), `nginx.conf`, `.dockerignore`, and `.devcontainer/` configuration. |
+| `--yes`, `-y` | `false` | Skips interactive prompts and accepts defaults. |
+| `--no-github` | `false` | Skips automatic GitHub repository creation and Pages setup. |
 
 ### What the CLI Scaffolder Generates:
 - **Angular 21 Standalone Application** pre-wired with the KMD single Light Theme (`_variables.scss` + `_base.scss`).
