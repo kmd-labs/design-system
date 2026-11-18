@@ -30,9 +30,10 @@ export class ThemeService {
       } else {
         root.removeAttribute('data-theme');
       }
-      document
-        .querySelector('meta[name="theme-color"]')
-        ?.setAttribute('content', this.getTokenColor('bg-deep', mode === 'dark' ? '#0b1526' : '#f5f7fb'));
+      const bgDeep = this.getTokenColor('bg-deep', '');
+      if (bgDeep) {
+        document.querySelector('meta[name="theme-color"]')?.setAttribute('content', bgDeep);
+      }
     }
     this._mode.set(mode);
   }
