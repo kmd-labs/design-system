@@ -1,3 +1,5 @@
+import { LucideIconData } from 'lucide-angular';
+
 export type SwitcherSize = 'sm' | 'md' | 'lg';
 export type SwitcherVariant = 'filled' | 'ghost';
 
@@ -8,7 +10,7 @@ export interface SwitcherOption<T = string> {
   /** Optional compact label shown when compact mode is active (e.g. "2D" / "3D"). */
   shortLabel?: string;
   /** Optional Lucide icon displayed next to the label. */
-  icon?: any;
+  icon?: LucideIconData | null | undefined;
   /** Optional tooltip shown on hover/focus. */
   tooltip?: string;
   disabled?: boolean;
