@@ -352,6 +352,13 @@ export class CarouselComponent<T = any> implements OnInit, OnDestroy {
     }
   }
 
+  onViewportClick(event: MouseEvent): void {
+    if (this.hasDragged) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+  }
+
   private finishDrag(event: PointerEvent): void {
     const dx = this.dragOffsetPx();
     const wasDragging = this.isHorizontalDrag;
