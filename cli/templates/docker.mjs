@@ -84,6 +84,8 @@ CMD ["/bin/bash"]
           name: `${appTitle} (Dev Container)`,
           build: { dockerfile: 'Dockerfile', context: '..' },
           workspaceFolder: '/workspace',
+          workspaceMount:
+            'source=${localWorkspaceFolder},target=/workspace,type=bind,consistency=delegated',
           forwardPorts: [4200, 9876],
           remoteUser: 'node',
           postCreateCommand:
