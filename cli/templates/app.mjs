@@ -13,6 +13,7 @@ export function createAppFiles({ appSlug, appTitle, withGlobe }) {
           scripts: {
             ng: 'ng',
             start: 'ng serve',
+            'start-devcontainer': 'ng serve --host 0.0.0.0',
             build: 'ng build',
             'build:gh-pages': `ng build --base-href /${appSlug}/`,
             'build:og': 'node scripts/generate-og.mjs',
