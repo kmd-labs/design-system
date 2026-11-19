@@ -20,8 +20,8 @@
       [attr.aria-label]="iconOnly() ? opt.label : null"
       [appTooltip]="opt.tooltip ?? (iconOnly() ? opt.label : null)"
       (click)="select(opt)">
-      @if (opt.icon) {
-        <lucide-icon [img]="opt.icon" [size]="iconSize()"></lucide-icon>
+      @if (opt.icon; as optIcon) {
+        <lucide-icon [img]="optIcon" [size]="iconSize()"></lucide-icon>
       }
       @if (!iconOnly()) {
         <span>{{ compact() && opt.shortLabel ? opt.shortLabel : opt.label }}</span>

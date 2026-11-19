@@ -5,7 +5,11 @@
     aria-modal="true"
     aria-labelledby="popup-dialog-title"
     (click)="onBackdropClick($event)">
-    <div class="popup-dialog glass-panel--heavy" [class]="'popup-dialog--' + activeSize">
+    <div
+      #dialogEl
+      class="popup-dialog glass-panel--heavy"
+      [class]="'popup-dialog--' + activeSize"
+      tabindex="-1">
       <header class="popup-dialog__header">
         <div class="popup-dialog__titles">
           <h2 id="popup-dialog-title" class="popup-dialog__title">{{ activeTitle }}</h2>

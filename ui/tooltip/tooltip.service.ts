@@ -4,6 +4,11 @@ import { SafeHtml } from '@angular/platform-browser';
 export type TooltipPlacement = 'top' | 'bottom';
 
 export interface TooltipOptions {
+  /**
+   * Optional rich HTML content bound via `[innerHTML]` in `TooltipComponent`.
+   * Plain strings are sanitized by Angular's `DomSanitizer` (scripts, event handlers,
+   * and unsafe attributes are stripped automatically); pass `SafeHtml` only for trusted markup.
+   */
   html?: SafeHtml | string;
   noWrap?: boolean;
   interactive?: boolean;
@@ -28,6 +33,11 @@ export class TooltipService {
 
   private autoHideTimer: ReturnType<typeof setTimeout> | null = null;
 
+  /**
+   * Displays the tooltip at viewport coordinates `(x, y)`.
+   * When `options.html` is provided, `TooltipComponent` renders it with `[innerHTML]`
+   * through Angular's `DomSanitizer`, stripping `<script>` tags and unsafe attributes.
+   */
   show(
     text: string,
     x: number,

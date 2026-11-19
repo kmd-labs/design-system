@@ -10,7 +10,7 @@ import {
   signal
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { LucideAngularModule, Check, ChevronDown } from 'lucide-angular';
+import { LucideAngularModule, LucideIconData, Check, ChevronDown } from 'lucide-angular';
 import { ButtonComponent, ButtonSize, ButtonVariant } from '../button/button.component';
 import { DropdownOption, BlurToken } from './dropdown.model';
 
@@ -28,8 +28,8 @@ export class DropdownComponent<T = string> {
   readonly options = input<DropdownOption<T>[]>([]);
   readonly value = input<T | undefined>(undefined);
   readonly label = input<string | undefined>(undefined);
-  readonly icon = input<any>(null);
-  readonly activeIcon = input<any>(null);
+  readonly icon = input<LucideIconData | null | undefined>(null);
+  readonly activeIcon = input<LucideIconData | null | undefined>(null);
   readonly iconSize = input<number>(15);
   readonly variant = input<ButtonVariant>('ghost');
   readonly size = input<ButtonSize>('md');

@@ -70,6 +70,7 @@ export class CarouselComponent<T = any> implements OnInit, OnDestroy {
   readonly userInteracted = signal(false);
 
   private autoTimer?: ReturnType<typeof setInterval>;
+  private hasDraggedTimer?: ReturnType<typeof setTimeout>;
   private pointerStartX = 0;
   private pointerStartY = 0;
   private isHorizontalDrag = false;
@@ -111,6 +112,10 @@ export class CarouselComponent<T = any> implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.stopAutoPlay();
+    if (this.hasDraggedTimer) {
+      clearTimeout(this.hasDraggedTimer);
+      this.hasDraggedTimer = undefined;
+    }
   }
 
   trackSlideById(_index: number, slide: CarouselSlide<T>): string {
@@ -369,7 +374,11 @@ export class CarouselComponent<T = any> implements OnInit, OnDestroy {
     }
 
     // Reset hasDragged after click dispatch cycle
-    setTimeout(() => {
+    if (this.hasDraggedTimer) {
+      clearTimeout(this.hasDraggedTimer);
+    }
+    this.hasDraggedTimer = setTimeout(() => {
+      this.hasDraggedTimer = undefined;
       this.hasDragged = false;
     }, 100);
 
