@@ -27,6 +27,8 @@ Running the bare command (or passing `--yes` without feature flags) scaffolds a 
 | `--yes`, `-y` | `false` | Skips interactive prompts and accepts defaults. |
 | `--no-github` | `false` | Skips automatic GitHub repository creation and Pages setup. |
 
+> **Docker note:** Scaffolded apps consume `src/design-system` as a Git submodule, so `git clone --recurse-submodules <repo-url>` (or `git submodule update --init --recursive`) is required before running `docker build`.
+
 ### What the CLI Scaffolder Generates:
 - **Angular 21 Standalone Application** pre-wired with the KMD single Light Theme (`_variables.scss` + `_base.scss`).
 - **Git Submodule (`src/design-system`)** linked to `https://github.com/kmd-labs/design-system.git` with TypeScript path alias `@kmd/design-system/*` and SCSS `includePaths`.

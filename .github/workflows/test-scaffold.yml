@@ -32,6 +32,12 @@ jobs:
           cd /tmp/scaffold-test
           node "${{ github.workspace }}/cli/index.mjs" "test-${{ matrix.name }}" ${{ matrix.flags }}
 
+      - name: Overlay PR design-system into scaffolded app
+        run: |
+          rm -rf "/tmp/scaffold-test/test-${{ matrix.name }}/src/design-system"
+          mkdir -p "/tmp/scaffold-test/test-${{ matrix.name }}/src/design-system"
+          tar --exclude='.git' --exclude='node_modules' -cf - -C "${{ github.workspace }}" . | tar -xf - -C "/tmp/scaffold-test/test-${{ matrix.name }}/src/design-system"
+
       - name: Install dependencies & build Angular app
         working-directory: /tmp/scaffold-test/test-${{ matrix.name }}
         env:
