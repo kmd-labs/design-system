@@ -292,16 +292,17 @@ export class CarouselComponent<T = any> implements OnInit, OnDestroy {
     this.hasDragged = false;
     this.dragOffsetPx.set(0);
     this.isPaused.set(true);
-
-    try {
-      (event.currentTarget as HTMLElement).setPointerCapture(event.pointerId);
-    } catch {
-      // Ignore if pointer capture fails
-    }
+    // Defer setPointerCapture until horizontal drag actually starts in onPointerMove,
+    // otherwise eager capture retargets pointerup to the viewport and swallows taps/clicks
+    // on links and buttons inside carousel slides (especially on mobile).
   }
 
   onPointerMove(event: PointerEvent): void {
     if (this.activePointerId !== event.pointerId) return;
+    if (event.pointerType === 'mouse' && event.buttons === 0) {
+      this.finishDrag(event);
+      return;
+    }
 
     const dx = event.clientX - this.pointerStartX;
     const dy = event.clientY - this.pointerStartY;
@@ -311,6 +312,11 @@ export class CarouselComponent<T = any> implements OnInit, OnDestroy {
         this.isHorizontalDrag = true;
         this.isDragging.set(true);
         this.transitionEnabled.set(false);
+        try {
+          (event.currentTarget as HTMLElement).setPointerCapture(event.pointerId);
+        } catch {
+          // Ignore if pointer capture fails
+        }
       } else if (Math.abs(dy) > 10) {
         this.releasePointer(event);
         return;
@@ -348,6 +354,13 @@ export class CarouselComponent<T = any> implements OnInit, OnDestroy {
       if (!this.userInteracted()) {
         this.restartAutoPlay();
       }
+    }
+  }
+
+  onViewportClick(event: MouseEvent): void {
+    if (this.hasDragged) {
+      event.preventDefault();
+      event.stopPropagation();
     }
   }
 
