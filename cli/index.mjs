@@ -136,7 +136,7 @@ try {
   } catch (lockErr) {
     console.warn('⚠️ Could not generate package-lock.json automatically:', lockErr.message);
   }
-  execSync('git add -A && git commit -m "feat: initial KMD app scaffold"', {
+  execSync('git add -A && git commit -m "feat: initial kmd-labs app scaffold"', {
     cwd: targetDir,
     stdio: 'inherit'
   });
