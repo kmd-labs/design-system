@@ -10,6 +10,7 @@ export * from './ui/dropdown/dropdown.model';
 export * from './ui/popup/popup.component';
 export * from './ui/popup/popup.model';
 export * from './ui/popup/popup.service';
+export * from './ui/settings/settings-popup.component';
 export * from './ui/splash/splash.component';
 export * from './ui/splash/splash.service';
 export * from './ui/switcher/switcher.component';
