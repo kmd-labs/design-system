@@ -152,9 +152,10 @@
       max-width 0.35s cubic-bezier(0.16, 1, 0.3, 1),
       box-shadow 0.3s ease;
 
+    &:hover,
     &--expanded,
     &--popup-open {
-      max-width: 280px;
+      max-width: min(300px, calc(100vw - 88px));
       box-shadow: 0 8px 24px color("shadow-heavy");
     }
   }
@@ -165,6 +166,7 @@
     gap: 0;
   }
 
+  .header__brand:hover .header__brand-btn,
   .header__brand--expanded .header__brand-btn,
   .header__brand--popup-open .header__brand-btn {
     padding: 0 8px 0 5px;
@@ -191,10 +193,11 @@
       opacity 0.25s ease;
   }
 
+  .header__brand:hover .header__brand-expand,
   .header__brand--expanded .header__brand-expand,
   .header__brand--popup-open .header__brand-expand {
     margin-left: 5px;
-    max-width: 240px;
+    max-width: 250px;
     opacity: 1;
     pointer-events: auto;
   }
@@ -212,7 +215,10 @@
   }
 
   .header__app-name {
-    display: none;
+    font-size: font-size("xs");
+    max-width: 210px;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 }
 
