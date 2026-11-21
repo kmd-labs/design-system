@@ -22,8 +22,8 @@ export class SettingsPopupComponent {
   readonly moonIcon = Moon;
 
   @Input() themeLabel = 'Appearance';
-  @Input() lightLabel = 'Light (Day)';
-  @Input() darkLabel = 'Midnight (Dark)';
+  @Input() lightLabel = 'Light';
+  @Input() darkLabel = 'Dark';
   @Input() langLabel = 'Language';
   @Input() languages: SettingsLangOption[] = [
     { id: 'en', label: 'English' },

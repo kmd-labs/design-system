@@ -263,8 +263,8 @@ export const EN: Dict = {
   // Top HUD & Navigation
   settingsTitle: 'Settings',
   themeLabel: 'Appearance',
-  themeLight: 'Light (Day)',
-  themeDark: 'Midnight (Dark)',
+  themeLight: 'Light',
+  themeDark: 'Dark',
   changeLanguage: 'Language',
   chooseView: 'View',
   viewPrimary: 'Overview',
@@ -293,8 +293,8 @@ export const PL: Dict = {
   // Top HUD & Navigation
   settingsTitle: 'Ustawienia',
   themeLabel: 'Wygląd',
-  themeLight: 'Jasny (Dzień)',
-  themeDark: 'Midnight (Ciemny)',
+  themeLight: 'Jasny',
+  themeDark: 'Ciemny',
   changeLanguage: 'Język',
   chooseView: 'Widok',
   viewPrimary: 'Przegląd',
