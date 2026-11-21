@@ -1,0 +1,52 @@
+<div class="settings">
+  <!-- Appearance Section -->
+  <section class="settings__section">
+    <h3 class="settings__label">{{ themeLabel }}</h3>
+    <div class="settings__group" role="radiogroup" [attr.aria-label]="themeLabel">
+      <button
+        type="button"
+        class="settings__option"
+        [class.settings__option--active]="theme.mode() === 'light'"
+        role="radio"
+        [attr.aria-checked]="theme.mode() === 'light'"
+        (click)="selectTheme('light')">
+        <span class="settings__badge settings__badge--icon" aria-hidden="true">
+          <lucide-icon [img]="sunIcon" [size]="13"></lucide-icon>
+        </span>
+        <span class="settings__name">{{ lightLabel }}</span>
+      </button>
+
+      <button
+        type="button"
+        class="settings__option"
+        [class.settings__option--active]="theme.mode() === 'dark'"
+        role="radio"
+        [attr.aria-checked]="theme.mode() === 'dark'"
+        (click)="selectTheme('dark')">
+        <span class="settings__badge settings__badge--icon" aria-hidden="true">
+          <lucide-icon [img]="moonIcon" [size]="13"></lucide-icon>
+        </span>
+        <span class="settings__name">{{ darkLabel }}</span>
+      </button>
+    </div>
+  </section>
+
+  <!-- Language Section -->
+  <section class="settings__section">
+    <h3 class="settings__label">{{ langLabel }}</h3>
+    <div class="settings__group" role="radiogroup" [attr.aria-label]="langLabel">
+      @for (l of languages; track l.id) {
+        <button
+          type="button"
+          class="settings__option"
+          [class.settings__option--active]="selectedLang() === l.id"
+          role="radio"
+          [attr.aria-checked]="selectedLang() === l.id"
+          (click)="selectLang(l.id)">
+          <span class="settings__badge" translate="no">{{ l.id.toUpperCase() }}</span>
+          <span class="settings__name">{{ l.label }}</span>
+        </button>
+      }
+    </div>
+  </section>
+</div>

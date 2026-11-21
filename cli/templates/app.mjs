@@ -231,6 +231,10 @@ export interface Dict {
   langName: string;
 
   // Top HUD & Navigation
+  settingsTitle: string;
+  themeLabel: string;
+  themeLight: string;
+  themeDark: string;
   changeLanguage: string;
   chooseView: string;
   viewPrimary: string;
@@ -257,6 +261,10 @@ export const EN: Dict = {
   langName: 'English',
 
   // Top HUD & Navigation
+  settingsTitle: 'Settings',
+  themeLabel: 'Appearance',
+  themeLight: 'Light',
+  themeDark: 'Dark',
   changeLanguage: 'Language',
   chooseView: 'View',
   viewPrimary: 'Overview',
@@ -283,6 +291,10 @@ export const PL: Dict = {
   langName: 'Polski',
 
   // Top HUD & Navigation
+  settingsTitle: 'Ustawienia',
+  themeLabel: 'Wygląd',
+  themeLight: 'Jasny',
+  themeDark: 'Ciemny',
   changeLanguage: 'Język',
   chooseView: 'Widok',
   viewPrimary: 'Przegląd',
@@ -382,7 +394,7 @@ export class I18nService {
       'src/app/app.component.ts',
       `import { Component, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { LucideAngularModule, Globe, Activity, Layers, BookOpen } from 'lucide-angular';
+import { LucideAngularModule, Settings, Activity, Layers, BookOpen } from 'lucide-angular';
 import {
   BrandComponent,
   ButtonComponent,
@@ -390,11 +402,14 @@ import {
   DropdownOption,
   PopupComponent,
   PopupService,
+  SettingsPopupComponent,
   SplashComponent,
   SplashService,
   AboutService,
   TimelineSliderComponent,
+  ThemeService,
   TooltipComponent,
+  TooltipDirective,
   BreakpointService,
   SeoService
 } from '@kmd/design-system';
@@ -413,7 +428,8 @@ ${withGlobe ? "import { GlobeComponent } from './components/globe/globe.componen
     PopupComponent,
     SplashComponent,
     TimelineSliderComponent,
-    TooltipComponent${withGlobe ? ',\n    GlobeComponent' : ''}
+    TooltipComponent,
+    TooltipDirective${withGlobe ? ',\n    GlobeComponent' : ''}
   ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
@@ -425,8 +441,9 @@ export class AppComponent {
   readonly about = inject(AboutService);
   readonly splash = inject(SplashService);
   readonly seo = inject(SeoService);
+  readonly theme = inject(ThemeService);
 
-  readonly globeIcon = Globe;
+  readonly settingsIcon = Settings;
   readonly bookOpenIcon = BookOpen;
 
   readonly currentView = signal<string>('primary');
@@ -438,16 +455,36 @@ export class AppComponent {
       description: 'Interactive scientific data visualization by KMD Labs.',
       image: 'assets/design-system/og-image.png'
     });
+    try {
+      const saved = localStorage.getItem('${appSlug}.theme');
+      if (saved === 'dark' || saved === 'light') this.theme.setMode(saved);
+    } catch {}
   }
 
-  readonly langOptions = computed<DropdownOption<Lang>[]>(() =>
-    this.i18n.langs.map(l => ({
-      value: l,
-      label: this.i18n.dicts[l].langName,
-      shortLabel: l.toUpperCase(),
-      badge: l.toUpperCase()
-    }))
-  );
+  openSettings() {
+    const t = this.i18n.t();
+    this.popup.open({
+      id: 'settings',
+      title: computed(() => this.i18n.t().settingsTitle),
+      component: SettingsPopupComponent,
+      componentInputs: {
+        themeLabel: t.themeLabel,
+        lightLabel: t.themeLight,
+        darkLabel: t.themeDark,
+        langLabel: t.changeLanguage,
+        languages: this.i18n.langs.map(id => ({ id, label: this.i18n.dicts[id].langName })),
+        activeLang: this.i18n.lang(),
+        onThemeChange: (mode: 'light' | 'dark') => {
+          try {
+            localStorage.setItem('${appSlug}.theme', mode);
+          } catch {}
+        },
+        onLangChange: (lang: string) => this.i18n.setLang(lang as Lang)
+      },
+      size: 'sm',
+      actions: [{ label: computed(() => this.i18n.t().close), variant: 'default' }]
+    });
+  }
 
   readonly viewOptions = computed<DropdownOption<string>[]>(() => {
     const t = this.i18n.t();
@@ -491,16 +528,16 @@ export class AppComponent {
         (btnClick)="about.open({ lang: i18n.lang() })">
       </app-brand>
 
-      <div class="header__settings glass-panel" role="group" [attr.aria-label]="t.changeLanguage">
-        <app-dropdown
+      <div class="header__settings glass-panel">
+        <app-button
           variant="ghost"
           [size]="bp.mobileLandscape() ? 'sm' : 'md'"
-          [icon]="bp.mobile() ? null : globeIcon"
-          [options]="langOptions()"
-          [value]="i18n.lang()"
-          [ariaLabel]="t.changeLanguage"
-          (valueChange)="i18n.setLang($event)">
-        </app-dropdown>
+          [iconOnly]="true"
+          [ariaLabel]="t.settingsTitle"
+          [appTooltip]="t.settingsTitle"
+          (btnClick)="openSettings()">
+          <lucide-icon [img]="settingsIcon" [size]="16" aria-hidden="true"></lucide-icon>
+        </app-button>
       </div>
     </div>
 
