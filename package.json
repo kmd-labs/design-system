@@ -5,7 +5,11 @@
   "type": "module",
   "bin": {
     "design-system": "./cli/index.mjs",
-    "create-kmd-app": "./cli/index.mjs"
+    "create-kmd-app": "./cli/index.mjs",
+    "kmd-og": "./cli/og.mjs"
+  },
+  "scripts": {
+    "test": "node --test cli/og.test.mjs"
   },
   "files": [
     "_variables.scss",
@@ -35,5 +39,11 @@
     "visualization",
     "scaffolder"
   ],
-  "license": "Apache-2.0"
+  "license": "Apache-2.0",
+  "dependencies": {
+    "@fontsource/inter": "^5.3.0",
+    "@fontsource/jetbrains-mono": "^5.3.0",
+    "@resvg/resvg-js": "^2.6.2",
+    "satori": "^0.63.2"
+  }
 }

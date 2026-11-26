@@ -30,7 +30,22 @@ const toTitle = slug =>
 
 let withDocker = process.argv.includes('--docker');
 let withGlobe = process.argv.includes('--globe');
-const args = process.argv.slice(2).filter(a => !a.startsWith('-'));
+let appDescription = '';
+const descFlagIdx = process.argv.findIndex(a => a === '--description' || a === '-d');
+if (descFlagIdx !== -1 && process.argv[descFlagIdx + 1] && !process.argv[descFlagIdx + 1].startsWith('-')) {
+  appDescription = process.argv[descFlagIdx + 1].trim();
+}
+
+const args = [];
+for (let i = 2; i < process.argv.length; i++) {
+  if (process.argv[i] === '--description' || process.argv[i] === '-d') {
+    i++;
+    continue;
+  }
+  if (!process.argv[i].startsWith('-')) {
+    args.push(process.argv[i]);
+  }
+}
 const cliArg = args[0] === 'new' || args[0] === 'create' ? args[1] : args[0];
 const isPlaceholder = !cliArg || toSlug(cliArg) === 'my-visualization-app';
 
@@ -63,6 +78,13 @@ if (process.stdin.isTTY && !process.argv.includes('--yes') && !process.argv.incl
     const defaultTitle = toTitle(appSlug);
     const titleAnswer = (await rl.question(`? Application display title (${defaultTitle}): `)).trim();
     appTitle = titleAnswer || defaultTitle;
+
+    if (!appDescription) {
+      const descAnswer = (
+        await rl.question(`? Short description (optional, used for SEO & OG card): `)
+      ).trim();
+      appDescription = descAnswer;
+    }
 
     if (!withGlobe) {
       const globeAnswer = (await rl.question(`? Include 3D Three.js globe component? (y/N): `)).trim();
@@ -105,7 +127,7 @@ write('CLAUDE.md', '@AGENTS.md\n');
 
 // 2. Write Angular app, workflows, and optional --globe / --docker templates
 const files = [
-  ...createAppFiles({ appSlug, appTitle, withGlobe }),
+  ...createAppFiles({ appSlug, appTitle, appDescription, withGlobe }),
   ...createWorkflowFiles({ appSlug, appTitle }),
   ...(withGlobe ? createGlobeFiles() : []),
   ...(withDocker ? createDockerFiles({ appSlug, appTitle }) : [])
@@ -124,7 +146,20 @@ try {
     { cwd: targetDir, stdio: 'inherit' }
   );
   try {
-    execSync('node scripts/generate-og.mjs', { cwd: targetDir, stdio: 'inherit' });
+    const dsDir = path.join(targetDir, 'src/design-system');
+    const dsModules = path.join(dsDir, 'node_modules');
+    if (!fs.existsSync(dsModules)) {
+      const localModules = path.join(DESIGN_SYSTEM_ROOT, 'node_modules');
+      if (fs.existsSync(localModules)) {
+        fs.symlinkSync(localModules, dsModules, 'dir');
+      } else {
+        execSync('npm ci --prefix src/design-system --silent', { cwd: targetDir, stdio: 'inherit' });
+      }
+    }
+    execSync('node src/design-system/cli/og.mjs', { cwd: targetDir, stdio: 'inherit' });
+    if (fs.existsSync(dsModules) && fs.lstatSync(dsModules).isSymbolicLink()) {
+      fs.unlinkSync(dsModules);
+    }
   } catch (ogErr) {
     console.warn('⚠️ Could not generate dynamic og-image automatically:', ogErr.message);
   }

@@ -1,7 +1,9 @@
 /**
  * Generates core Angular 21 application config, i18n, and HUD shell files.
  */
-export function createAppFiles({ appSlug, appTitle, withGlobe }) {
+export function createAppFiles({ appSlug, appTitle, appDescription = '', withGlobe }) {
+  const htmlDescription =
+    appDescription || 'Interactive scientific data visualization by KMD Labs.';
   return [
     ['.npmrc', 'legacy-peer-deps=true\n'],
     [
@@ -16,9 +18,16 @@ export function createAppFiles({ appSlug, appTitle, withGlobe }) {
             'start-devcontainer': 'ng serve --host 0.0.0.0',
             build: 'ng build',
             'build:gh-pages': `ng build --base-href /${appSlug}/`,
-            'build:og': 'node scripts/generate-og.mjs',
+            'build:og':
+              '[ -d src/design-system/node_modules ] || npm ci --prefix src/design-system --silent; node src/design-system/cli/og.mjs',
             watch: 'ng build --watch --configuration development',
             'setup:github': 'node scripts/setup-github.mjs'
+          },
+          kmd: {
+            og: {
+              title: appTitle,
+              description: appDescription
+            }
           },
           private: true,
           dependencies: {
@@ -180,7 +189,7 @@ export function createAppFiles({ appSlug, appTitle, withGlobe }) {
   <title>KMD · ${appTitle}</title>
   <base href="/">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="KMD Labs interactive scientific visualization: planetary telemetry, 3D WebGL simulation, and environmental data.">
+  <meta name="description" content="${htmlDescription}">
   <meta name="theme-color" content="#f5f7fb">
   <link rel="icon" type="image/svg+xml" href="assets/design-system/favicon.svg">
   <link rel="alternate icon" type="image/x-icon" href="assets/design-system/favicon.ico">
@@ -189,14 +198,16 @@ export function createAppFiles({ appSlug, appTitle, withGlobe }) {
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="KMD Labs">
   <meta property="og:title" content="KMD · ${appTitle}">
-  <meta property="og:description" content="Interactive scientific data visualization by KMD Labs.">
+  <meta property="og:description" content="${htmlDescription}">
   <meta property="og:image" content="https://kmd-labs.github.io/${appSlug}/assets/og-image.png">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="KMD · ${appTitle}">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="KMD · ${appTitle}">
-  <meta name="twitter:description" content="Interactive scientific data visualization by KMD Labs.">
+  <meta name="twitter:description" content="${htmlDescription}">
   <meta name="twitter:image" content="https://kmd-labs.github.io/${appSlug}/assets/og-image.png">
+  <meta name="twitter:image:alt" content="KMD · ${appTitle}">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -452,8 +463,7 @@ export class AppComponent {
   constructor() {
     this.seo.update({
       title: 'KMD · ${appTitle}',
-      description: 'Interactive scientific data visualization by KMD Labs.',
-      image: 'assets/design-system/og-image.png'
+      description: '${htmlDescription.replace(/'/g, "\\'")}'
     });
     try {
       const saved = localStorage.getItem('${appSlug}.theme');
