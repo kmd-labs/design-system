@@ -30,6 +30,7 @@ const toTitle = slug =>
 
 let withDocker = process.argv.includes('--docker');
 let withGlobe = process.argv.includes('--globe');
+let isPrivate = !process.argv.includes('--public');
 let appDescription = '';
 const descFlagIdx = process.argv.findIndex(a => a === '--description' || a === '-d');
 if (descFlagIdx !== -1 && process.argv[descFlagIdx + 1] && !process.argv[descFlagIdx + 1].startsWith('-')) {
@@ -95,11 +96,18 @@ if (process.stdin.isTTY && !process.argv.includes('--yes') && !process.argv.incl
       const dockerAnswer = (await rl.question(`? Include Docker & Dev Container setup? (y/N): `)).trim();
       withDocker = /^y(es)?$/i.test(dockerAnswer);
     }
+
+    if (!process.argv.includes('--public') && !process.argv.includes('--private')) {
+      const privateAnswer = (await rl.question(`? Make GitHub repository private? (Y/n): `)).trim();
+      isPrivate = !/^n(o)?$/i.test(privateAnswer);
+    }
   } finally {
     rl.close();
   }
 } else if (!appSlug) {
-  console.error('\nUsage: npx github:kmd-labs/design-system [app-name] [--docker] [--globe] [--yes] [--no-github]\n');
+  console.error(
+    '\nUsage: npx github:kmd-labs/design-system [app-name] [--description "..."] [--private|--public] [--docker] [--globe] [--yes] [--no-github]\n'
+  );
   process.exit(1);
 }
 
@@ -128,7 +136,7 @@ write('CLAUDE.md', '@AGENTS.md\n');
 // 2. Write Angular app, workflows, and optional --globe / --docker templates
 const files = [
   ...createAppFiles({ appSlug, appTitle, appDescription, withGlobe }),
-  ...createWorkflowFiles({ appSlug, appTitle }),
+  ...createWorkflowFiles({ appSlug, appTitle, isPrivate }),
   ...(withGlobe ? createGlobeFiles() : []),
   ...(withDocker ? createDockerFiles({ appSlug, appTitle }) : [])
 ];
