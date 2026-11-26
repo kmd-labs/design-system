@@ -15,13 +15,16 @@ npx github:kmd-labs/design-system
 Or pass your project name and optional flags directly:
 
 ```bash
-npx github:kmd-labs/design-system <your-app-name> [--globe] [--docker] [--yes] [--no-github]
+npx github:kmd-labs/design-system <your-app-name> [--description "..."] [--private|--public] [--globe] [--docker] [--yes] [--no-github]
 ```
 
-Running the bare command (or passing `--yes` without feature flags) scaffolds a **barebones** visualization app by default. In interactive mode, the CLI also asks whether to include the optional extras below:
+Running the bare command (or passing `--yes` without feature flags) scaffolds a **barebones** visualization app with a **private** GitHub repository by default. In interactive mode, the CLI also asks for an optional description, repository visibility, and whether to include the optional extras below:
 
 | Flag | Default | Description |
 | :--- | :--- | :--- |
+| `--description`, `-d` | `""` | Optional short description used in HTML SEO meta tags and the generated `src/assets/og-image.png` card. |
+| `--private` | `true` | Creates the GitHub repository as **private** and skips GitHub Pages enablement. `.github/workflows/deploy.yml` is still included and will automatically start deploying once the repo is made public. |
+| `--public` | `false` | Creates the GitHub repository as **public** and enables GitHub Pages (`GitHub Actions`) immediately. |
 | `--globe` | `false` | Adds `three` / `@types/three` and scaffolds a fullscreen `GlobeComponent` (`OrbitControls` with 1:1 cursor tracking and live theme reactivity) inside `.stage`. |
 | `--docker` | `false` | Adds a multi-stage production `Dockerfile` (Nginx SPA), `nginx.conf`, `.dockerignore`, and `.devcontainer/` configuration. |
 | `--yes`, `-y` | `false` | Skips interactive prompts and accepts defaults. |

@@ -1,7 +1,7 @@
 /**
  * Generates GitHub Actions workflows and helper scripts (OG image generation & GitHub repo setup).
  */
-export function createWorkflowFiles({ appSlug, appTitle }) {
+export function createWorkflowFiles({ appSlug, appTitle, isPrivate = true }) {
   const protectionPayload = JSON.stringify(
     {
       required_status_checks: null,
@@ -49,7 +49,27 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  check-visibility:
+    runs-on: ubuntu-latest
+    outputs:
+      is_public: \${{ steps.vis.outputs.is_public }}
+    steps:
+      - name: Check repository visibility
+        id: vis
+        env:
+          GH_TOKEN: \${{ github.token }}
+        run: |
+          IS_PRIVATE=\$(gh api "repos/\${{ github.repository }}" --jq '.private')
+          if [ "\$IS_PRIVATE" = "true" ]; then
+            echo "is_public=false" >> "\$GITHUB_OUTPUT"
+            echo "Repository is private; skipping GitHub Pages build/deploy."
+          else
+            echo "is_public=true" >> "\$GITHUB_OUTPUT"
+          fi
+
   build:
+    needs: check-visibility
+    if: needs.check-visibility.outputs.is_public == 'true'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout with Design System submodule
@@ -245,6 +265,12 @@ jobs:
 import { execSync } from 'node:child_process';
 
 const repo = 'kmd-labs/${appSlug}';
+const defaultPrivate = ${Boolean(isPrivate)};
+const isPrivate = process.argv.includes('--public')
+  ? false
+  : process.argv.includes('--private')
+    ? true
+    : defaultPrivate;
 const protection = ${protectionPayload};
 
 const run = (cmd, opts = {}) => execSync(cmd, { stdio: 'inherit', ...opts });
@@ -263,8 +289,8 @@ try {
   try {
     runSilent(\`gh repo view \${repo}\`);
   } catch {
-    console.log(\`Creating public repository \${repo}...\`);
-    run(\`gh repo create \${repo} --public\`);
+    console.log(\`Creating \${isPrivate ? 'private' : 'public'} repository \${repo}...\`);
+    run(\`gh repo create \${repo} \${isPrivate ? '--private' : '--public'}\`);
   }
 
   // 3. Ensure origin remote is configured
@@ -274,29 +300,35 @@ try {
     run(\`git remote add origin https://github.com/\${repo}.git\`);
   }
 
-  // 4. Enable GitHub Pages via GitHub Actions BEFORE pushing so the initial workflow succeeds immediately
-  console.log(\`🌐 Enabling GitHub Pages (GitHub Actions) on \${repo}...\`);
-  try {
-    runSilent(\`gh api repos/\${repo}/pages -X POST -f build_type=workflow\`);
-    console.log('✅ GitHub Pages enabled with GitHub Actions!');
-  } catch {
+  // 4. Enable GitHub Pages via GitHub Actions BEFORE pushing (public repos only)
+  if (isPrivate) {
+    console.log(\`🔒 Private repository: skipping GitHub Pages enablement (Pages will deploy automatically once the repo is made public).\`);
+  } else {
+    console.log(\`🌐 Enabling GitHub Pages (GitHub Actions) on \${repo}...\`);
     try {
-      runSilent(\`gh api repos/\${repo}/pages -X PUT -f build_type=workflow\`);
-      console.log('✅ GitHub Pages updated to GitHub Actions!');
-    } catch {}
+      runSilent(\`gh api repos/\${repo}/pages -X POST -f build_type=workflow\`);
+      console.log('✅ GitHub Pages enabled with GitHub Actions!');
+    } catch {
+      try {
+        runSilent(\`gh api repos/\${repo}/pages -X PUT -f build_type=workflow\`);
+        console.log('✅ GitHub Pages updated to GitHub Actions!');
+      } catch {}
+    }
   }
 
   // 5. Push main branch
   console.log(\`🚀 Pushing main branch to \${repo}...\`);
   run('git push -u origin main');
 
-  // 6. Confirm GitHub Pages status after branch creation
-  try {
-    runSilent(\`gh api repos/\${repo}/pages -X POST -f build_type=workflow\`);
-  } catch {
+  // 6. Confirm GitHub Pages status after branch creation (public repos only)
+  if (!isPrivate) {
     try {
-      runSilent(\`gh api repos/\${repo}/pages -X PUT -f build_type=workflow\`);
-    } catch {}
+      runSilent(\`gh api repos/\${repo}/pages -X POST -f build_type=workflow\`);
+    } catch {
+      try {
+        runSilent(\`gh api repos/\${repo}/pages -X PUT -f build_type=workflow\`);
+      } catch {}
+    }
   }
 
   // 7. Apply canonical KMD main branch protection (1 PR review, dismiss stale reviews, org admins bypass)
@@ -349,7 +381,11 @@ try {
   }
 
   console.log(\`\\n🎉 Repository setup complete: https://github.com/\${repo}\`);
-  console.log(\`🌐 Live site URL: https://kmd-labs.github.io/${appSlug}/\\n\`);
+  if (isPrivate) {
+    console.log('🔒 Visibility: private (switch to public and enable Pages in Settings to publish to github.io)\\n');
+  } else {
+    console.log(\`🌐 Live site URL: https://kmd-labs.github.io/${appSlug}/\\n\`);
+  }
 } catch (err) {
   console.error('⚠️ Could not complete GitHub repo setup automatically:', err.message);
   console.warn('Run "npm run setup:github" once your repository is ready.');
