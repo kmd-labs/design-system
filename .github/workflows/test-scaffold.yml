@@ -7,6 +7,16 @@ on:
     branches: [main]
 
 jobs:
+  og-unit-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm ci
+      - run: npm test
+
   scaffold-and-build:
     runs-on: ubuntu-latest
     strategy:
@@ -44,6 +54,8 @@ jobs:
           NG_CLI_ANALYTICS: 'false'
         run: |
           npm install --legacy-peer-deps
+          npm run build:og
+          test -f src/assets/og-image.png
           npm run build
 
       - name: Test Docker production image build

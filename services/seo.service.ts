@@ -75,7 +75,7 @@ export function provideKmdFavicon(basePath = 'assets/design-system'): Environmen
 @Injectable({ providedIn: 'root' })
 export class SeoService {
   private readonly defaultSiteName = 'KMD Labs';
-  private readonly defaultOgImage = 'assets/design-system/og-image.png';
+  private readonly defaultOgImage = 'assets/og-image.png';
 
   /**
    * Applies a complete SEO metadata bundle (title, description, canonical, OpenGraph, Twitter).
@@ -132,7 +132,7 @@ export class SeoService {
 
     const siteName = config.siteName ?? this.defaultSiteName;
     const type = config.type ?? 'website';
-    const image = config.image ?? this.defaultOgImage;
+    const image = this.resolveImageUrl(config.image ?? this.defaultOgImage, config.canonicalUrl);
 
     this.setMetaTag('og:site_name', siteName, 'property');
     this.setMetaTag('og:type', type, 'property');
@@ -156,7 +156,7 @@ export class SeoService {
   updateTwitterCard(config: SeoMetaConfig): void {
     if (typeof document === 'undefined') return;
 
-    const image = config.image ?? this.defaultOgImage;
+    const image = this.resolveImageUrl(config.image ?? this.defaultOgImage, config.canonicalUrl);
     this.setMetaTag('twitter:card', 'summary_large_image', 'name');
     this.setMetaTag('twitter:image', image, 'name');
 
@@ -188,6 +188,17 @@ export class SeoService {
     const xDefaultUrl = new URL(base.href);
     xDefaultUrl.searchParams.delete('lang');
     this.setLinkTag('alternate', xDefaultUrl.href, 'x-default');
+  }
+
+  private resolveImageUrl(image: string, canonicalUrl?: string): string {
+    if (!image || /^https?:\/\//i.test(image) || !canonicalUrl) {
+      return image;
+    }
+    try {
+      return new URL(image.replace(/^\/+/, ''), canonicalUrl.endsWith('/') ? canonicalUrl : `${canonicalUrl}/`).href;
+    } catch {
+      return image;
+    }
   }
 
   setMetaTag(key: string, content: string, attr: 'name' | 'property' = 'name'): void {
